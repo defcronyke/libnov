@@ -1,0 +1,102 @@
+# Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
+#
+# All uses of this project in part or in whole are governed
+# by the terms of the license contained in the file titled
+# "LICENSE" that's distributed along with the project, which
+# can be found in the top-level directory of this project.
+#
+# If you don't agree to follow those terms or you won't
+# follow them, you are not allowed to use this project or
+# anything that's made with parts of it at all. The project
+# is also	depending on some third-party technologies, and
+# some of those are governed by their own separate licenses,
+# so furthermore, whenever legally possible, all license
+# terms from all of the different technologies apply, with
+# this project's license terms taking first priority.
+#
+# NOTE: This file includes some possibly modified example 
+# text from:
+# https://github.com/gfx-rs/gfx/blob/master/examples/Cargo.toml
+
+[package]
+name = "libnov"
+version = "0.1.0"
+authors = ["Jeremy Carter <jeremy@jeremycarter.ca>"]
+description = "libnov - Nov Open View Library"
+homepage = "https://gitlab.com/defcronyke/hobnob"
+repository = "https://gitlab.com/defcronyke/libnov"
+license = "MIT"
+# categories = ""
+workspace = "../nov"
+default-run = "load-image"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+default = []
+metal = ["gfx-backend-metal"]
+gl = ["gfx-backend-gl"]
+dx11 = ["gfx-backend-dx11"]
+dx12 = ["gfx-backend-dx12"]
+vulkan = ["gfx-backend-vulkan"]
+empty = ["gfx-backend-empty"]
+unstable = []
+
+[lib]
+name = "libnov"
+
+[[bin]]
+name = "load-image"
+path = "cmd/load-image/main.rs"
+
+[dependencies]
+image = "0.23.12"
+log = "0.4"
+hal = { version = "0.7", package = "gfx-hal" }
+auxil = { version = "0.8", package = "gfx-auxil" }
+winit = { version = "0.24", features = ["web-sys"] }
+
+[dependencies.gfx-backend-empty]
+version = "0.7"
+optional = true
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+env_logger = "0.8"
+glsl-to-spirv = "0.1"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2"
+console_error_panic_hook = "0.1"
+console_log = "0.1"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
+version = "0.3"
+features = [ "console", "Document", "Element", "HtmlElement", "Node", "Window" ]
+
+[target.'cfg(not(any(feature = "vulkan", feature = "dx11", feature = "dx12", feature = "metal", feature = "gl", feature = "empty")))'.dependencies.gfx-backend-vulkan]
+version = "0.7"
+
+[dependencies.gfx-backend-vulkan]
+version = "0.7"
+optional = true
+
+[target.'cfg(all(unix, not(target_os = "ios"), not(target_os = "macos"), not(target_os = "android")))'.dependencies.gfx-backend-gl]
+version = "0.7"
+optional = true
+
+[target.'cfg(all(target_arch = "wasm32"))'.dependencies.gfx-backend-gl]
+version = "0.7"
+optional = true
+
+[target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies.gfx-backend-metal]
+version = "0.7"
+optional = true
+
+[target.'cfg(windows)'.dependencies.gfx-backend-dx11]
+version = "0.7"
+optional = true
+
+[target.'cfg(windows)'.dependencies.gfx-backend-dx12]
+version = "0.7"
+optional = true
