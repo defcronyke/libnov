@@ -127,8 +127,11 @@ pub fn main() {
     let event_loop = winit::event_loop::EventLoop::new();
 
     // Image size
-    let (img_file_path, _img_file_prefixes) =
-        file::get_file_path(Some(PROJECT_FILENAME), Some(PROJECT_FILE_PREFIXES.to_vec())).unwrap();
+    let (img_file_path, _img_file_prefixes) = file::get_path(
+        Some(GET_PATH_PROJECT_FILENAME),
+        Some(GET_PATH_PROJECT_FILE_PREFIXES.to_vec()),
+    )
+    .unwrap();
 
     let (width, height) = imagesize::size(&img_file_path)
         .map(|res| (res.width as u32, res.height as u32))
@@ -399,8 +402,8 @@ where
 
         let (_img_filename, _img_file_prefixes) = file::read(
             &mut img_data,
-            Some(PROJECT_FILENAME),
-            Some(PROJECT_FILE_PREFIXES.to_vec()),
+            Some(GET_PATH_PROJECT_FILENAME),
+            Some(GET_PATH_PROJECT_FILE_PREFIXES.to_vec()),
         )
         .unwrap();
 

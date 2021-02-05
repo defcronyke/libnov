@@ -19,34 +19,42 @@
     https://github.com/gfx-rs/gfx/blob/master/examples/quad/main.rs
 */
 
+use crate::constant::*;
 use std::{env, fs, path};
 
-pub fn get_file_path<'a>(
+pub fn get_path<'a>(
     src: Option<&str>,
     src_prefixes: Option<Vec<&'a str>>,
 ) -> Result<(String, Vec<&'a str>), String> {
     let args: Vec<String> = env::args().collect();
     let args_len = args.len();
 
-    let filename_prefixes = src_prefixes.unwrap_or(vec!["."]);
+    let filename_prefixes: Vec<&str> = src_prefixes
+        .unwrap_or(GET_PATH_DEFAULT_FILE_PREFIXES.to_vec())
+        .into_iter()
+        .map(|res| path::Path::new(res).to_str().unwrap())
+        .collect();
 
     let mut filename = "".to_string();
     let mut filename2 = String::new();
 
     if args_len <= 1 {
-        filename = src.map_or_else(|| filename, |res| res.to_string());
+        filename = path::Path::new(&src.map_or_else(|| filename, |res| res.to_string()))
+            .to_str()
+            .unwrap()
+            .to_string();
 
-        println!(
-            "get_file_path() invoked with filename_in parameter: {}",
-            filename
-        );
+        println!("get_path() invoked with src parameter: {}", filename);
     } else if args_len > 1 {
         println!(
-            "get_file_path() invoked with command line arguments: {:?}",
+            "get_path() invoked with command line arguments: {:?}",
             args[1..].to_vec()
         );
 
-        filename = args[1].clone();
+        filename = path::Path::new(&args[1].clone())
+            .to_str()
+            .unwrap()
+            .to_string();
     }
 
     if filename == "" {
@@ -57,17 +65,25 @@ pub fn get_file_path<'a>(
         return Err(err.to_string());
     }
 
+    let mut filename_prefixes2 = GET_PATH_DEFAULT_FILE_PREFIXES.to_vec();
+    let first_char: &str = &filename.chars().nth(0).unwrap().to_string();
+    if first_char != "/" {
+        filename_prefixes2 = filename_prefixes;
+    }
+
     println!(
         "will check if file exists: {}
 looking for file in the following directories: {:?}",
-        &filename, filename_prefixes
+        &filename, filename_prefixes2
     );
 
     let mut file_found = false;
 
-    for filename_prefix in filename_prefixes.clone() {
-        // TODO: Build path properly
-        filename2 = format!("{}/{}", filename_prefix, &filename);
+    for filename_prefix in filename_prefixes2.clone() {
+        filename2 = path::Path::new(&format!("{}{}", filename_prefix, &filename))
+            .to_str()
+            .unwrap()
+            .to_string();
 
         println!("checking if file exists: {}", &filename2);
 
@@ -83,7 +99,7 @@ looking for file in the following directories: {:?}",
         let err = format!(
             "error: File not found: {}
 error: Looked for file in the following directories: {:?}",
-            filename, filename_prefixes
+            &filename, filename_prefixes2
         );
 
         eprintln!("{}", &err);
@@ -93,7 +109,7 @@ error: Looked for file in the following directories: {:?}",
 
     println!("found file: {}", &filename2);
 
-    Ok((filename2, filename_prefixes))
+    Ok((filename2, filename_prefixes2))
 }
 
 pub fn read<'a>(
@@ -101,7 +117,7 @@ pub fn read<'a>(
     src: Option<&str>,
     src_prefixes: Option<Vec<&'a str>>,
 ) -> Result<(String, Vec<&'a str>), String> {
-    let (filename, filename_prefixes) = get_file_path(src, src_prefixes)?;
+    let (filename, filename_prefixes) = get_path(src, src_prefixes)?;
 
     *dst = fs::read(&filename).map_or_else(
         |err| {

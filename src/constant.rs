@@ -19,5 +19,17 @@
     https://github.com/gfx-rs/gfx/blob/master/examples/quad/main.rs
 */
 
-pub const PROJECT_FILENAME: &str = "ts-ellipsis-cover-m.png";
-pub const PROJECT_FILE_PREFIXES: [&str; 5] = [".", "..", "data", "../libnov/data", "libnov/data"];
+pub const GET_PATH_DEFAULT_FILE_PREFIXES: [&str; 1] = [""];
+
+/// Search these directories when calling `file::get_path()`.
+pub const GET_PATH_PROJECT_FILE_PREFIXES: [&str; 7] = [
+    GET_PATH_DEFAULT_FILE_PREFIXES[0],
+    "../",
+    "data/",
+    "../libnov/",
+    "libnov/",
+    "../libnov/data/",
+    "libnov/data/",
+];
+
+pub const GET_PATH_PROJECT_FILENAME: &str = "ts-ellipsis-cover-m.png";
