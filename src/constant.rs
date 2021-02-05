@@ -13,13 +13,11 @@
     so furthermore, whenever legally possible, all license
     terms from all of the different technologies apply, with
     this project's license terms taking first priority.
+
+    NOTE: This file includes some possibly modified example
+    code from:
+    https://github.com/gfx-rs/gfx/blob/master/examples/quad/main.rs
 */
 
-pub mod constant;
-pub mod file;
-
-pub use constant::*;
-
-pub fn main() {
-    println!("Hello, world!");
-}
+pub const PROJECT_FILENAME: &str = "ts-ellipsis-cover-m.png";
+pub const PROJECT_FILE_PREFIXES: [&str; 5] = [".", "..", "data", "../libnov/data", "libnov/data"];

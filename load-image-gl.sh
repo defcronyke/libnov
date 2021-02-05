@@ -28,4 +28,4 @@
 #   cargo run --features gl
 #
 
-cargo run --features vulkan --color always $@
+cargo run --features gl --color always $@

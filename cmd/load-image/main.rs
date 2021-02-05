@@ -23,7 +23,13 @@
 extern crate gfx_backend_dx11 as back;
 #[cfg(feature = "dx12")]
 extern crate gfx_backend_dx12 as back;
-#[cfg(feature = "empty")]
+#[cfg(not(any(
+    feature = "vulkan",
+    feature = "dx11",
+    feature = "dx12",
+    feature = "metal",
+    feature = "gl",
+)))]
 extern crate gfx_backend_empty as back;
 #[cfg(feature = "gl")]
 extern crate gfx_backend_gl as back;
@@ -31,15 +37,8 @@ extern crate gfx_backend_gl as back;
 extern crate gfx_backend_metal as back;
 #[cfg(feature = "vulkan")]
 extern crate gfx_backend_vulkan as back;
-#[cfg(not(any(
-    feature = "vulkan",
-    feature = "dx11",
-    feature = "dx12",
-    feature = "metal",
-    feature = "gl",
-    feature = "empty",
-)))]
-extern crate gfx_backend_vulkan as back;
+
+extern crate imagesize;
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -63,6 +62,9 @@ use hal::{
     queue::QueueGroup,
     window,
 };
+
+use libnov::constant::*;
+use libnov::file;
 
 use std::{
     borrow::Borrow,
@@ -104,9 +106,6 @@ pub fn main() {
     #[cfg(feature = "dx12")]
     println!("using gfx-hal backend: dx12");
 
-    #[cfg(feature = "empty")]
-    eprintln!("using gfx-hal backend: empty");
-
     #[cfg(feature = "gl")]
     println!("using gfx-hal backend: gl");
 
@@ -122,24 +121,26 @@ pub fn main() {
         feature = "dx12",
         feature = "metal",
         feature = "gl",
-        feature = "empty",
     )))]
-    println!("using gfx-hal backend: vulkan");
+    eprintln!("using gfx-hal backend: empty");
 
     let event_loop = winit::event_loop::EventLoop::new();
 
-    // Image
-    let img_data = include_bytes!("../../data/ts-artist-photo-small.png");
+    // Image size
+    let (img_file_path, _img_file_prefixes) =
+        file::get_file_path(Some(PROJECT_FILENAME), Some(PROJECT_FILE_PREFIXES.to_vec())).unwrap();
 
-    let img = image::load(Cursor::new(&img_data[..]), image::ImageFormat::Png)
-        .unwrap()
-        .to_rgba8();
+    let (width, height) = imagesize::size(&img_file_path)
+        .map(|res| (res.width as u32, res.height as u32))
+        .unwrap();
 
-    let (width, height) = img.dimensions();
+    println!(
+        "got image size for file: {}: ({}, {})",
+        &img_file_path, width, height
+    );
 
     #[cfg_attr(rustfmt, rustfmt_skip)]
 	let dims: window::Extent2D = window::Extent2D { width, height };
-    // const dims: window::Extent2D = window::Extent2D { width: 1024, height: 768 };
 
     let wb = winit::window::WindowBuilder::new()
         .with_min_inner_size(winit::dpi::Size::Logical(winit::dpi::LogicalSize::new(
@@ -394,7 +395,14 @@ where
         };
 
         // Image
-        let img_data = include_bytes!("../../data/ts-artist-photo-small.png");
+        let mut img_data = Vec::<u8>::new();
+
+        let (_img_filename, _img_file_prefixes) = file::read(
+            &mut img_data,
+            Some(PROJECT_FILENAME),
+            Some(PROJECT_FILE_PREFIXES.to_vec()),
+        )
+        .unwrap();
 
         let img = image::load(Cursor::new(&img_data[..]), image::ImageFormat::Png)
             .unwrap()

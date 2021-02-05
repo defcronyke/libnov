@@ -40,7 +40,6 @@ gl = ["gfx-backend-gl"]
 dx11 = ["gfx-backend-dx11"]
 dx12 = ["gfx-backend-dx12"]
 vulkan = ["gfx-backend-vulkan"]
-empty = ["gfx-backend-empty"]
 unstable = []
 
 [lib]
@@ -51,15 +50,13 @@ name = "load-image"
 path = "cmd/load-image/main.rs"
 
 [dependencies]
-image = "0.23.12"
+image = "0.23"
 log = "0.4"
+imagesize = "0.8"
+gfx-backend-empty = { version = "0.7" }
 hal = { version = "0.7", package = "gfx-hal" }
 auxil = { version = "0.8", package = "gfx-auxil" }
 winit = { version = "0.24", features = ["web-sys"] }
-
-[dependencies.gfx-backend-empty]
-version = "0.7"
-optional = true
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 env_logger = "0.8"
@@ -73,9 +70,6 @@ console_log = "0.1"
 [target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
 version = "0.3"
 features = [ "console", "Document", "Element", "HtmlElement", "Node", "Window" ]
-
-[target.'cfg(not(any(feature = "vulkan", feature = "dx11", feature = "dx12", feature = "metal", feature = "gl", feature = "empty")))'.dependencies.gfx-backend-vulkan]
-version = "0.7"
 
 [dependencies.gfx-backend-vulkan]
 version = "0.7"
