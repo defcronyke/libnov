@@ -1,4 +1,4 @@
-/*	Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
+/*  Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 
     All uses of this project in part or in whole are governed
     by the terms of the license contained in the file titled
