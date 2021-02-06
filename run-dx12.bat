@@ -1,0 +1,1 @@
+load-image-dx12.bat

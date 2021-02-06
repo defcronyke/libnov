@@ -57,7 +57,7 @@ pub fn get_path<'a>(
             .to_string();
     }
 
-    if filename == "" {
+    if filename.chars().count() == 0 {
         let err = "error: No filename specified.";
 
         eprintln!("{}", err);
@@ -66,9 +66,20 @@ pub fn get_path<'a>(
     }
 
     let mut filename_prefixes2 = GET_PATH_DEFAULT_FILE_PREFIXES.to_vec();
+
     let first_char: &str = &filename.chars().nth(0).unwrap().to_string();
-    if first_char != "/" {
-        filename_prefixes2 = filename_prefixes;
+    let mut second_char = "".to_string();
+    let mut third_char = "".to_string();
+
+    if filename.chars().count() > 3 {
+        second_char = filename.chars().nth(1).unwrap().to_string();
+        third_char = filename.chars().nth(2).unwrap().to_string();
+    }
+
+    // Handle absolute paths on Linux/UNIX, macOS, and Windows.
+    if (filename.chars().count() < 2 || first_char != "/") &&
+        (filename.chars().count() < 4 || (second_char.as_str() != ":" && third_char.as_str() != "\\")) {
+        filename_prefixes2 = filename_prefixes.clone();
     }
 
     println!(

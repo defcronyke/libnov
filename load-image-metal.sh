@@ -28,4 +28,4 @@
 #   cargo run --features gl
 #
 
-CARGO_TARGET_DIR=../nov/target-gl cargo run --features gl --color always $@
+CARGO_TARGET_DIR=../nov/target-metal cargo run --features metal --color always $@
