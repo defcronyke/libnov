@@ -15,11 +15,15 @@
     this project's license terms taking first priority.
 */
 
+pub mod conf;
 pub mod constant;
 pub mod file;
 
+pub use conf::*;
 pub use constant::*;
 
 pub fn main() {
-    println!("Hello, world!");
+    let c: Conf = conf::load(None);
+
+    println!("config file:\n{}", serde_yaml::to_string(&c).unwrap());
 }

@@ -53,6 +53,8 @@ path = "cmd/load-image/main.rs"
 image = "0.23"
 log = "0.4"
 imagesize = "0.8"
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.8"
 gfx-backend-empty = { version = "0.7" }
 hal = { version = "0.7", package = "gfx-hal" }
 auxil = { version = "0.8", package = "gfx-auxil" }
