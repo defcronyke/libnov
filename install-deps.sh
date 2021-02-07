@@ -73,7 +73,6 @@ install_libnov_deps() {
       echo "error: The easiest way is to re-run this script after installing brew from here: https://brew.sh"
       return 2
     fi
-  elif [ `uname` ]
   else
     echo "error: Unknown distro."
     echo "Otherwise, make sure you have Vulkan installed properly and you should be fine."
