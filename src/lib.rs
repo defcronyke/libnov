@@ -18,12 +18,46 @@
 pub mod conf;
 pub mod constant;
 pub mod file;
+pub mod result;
+pub mod window;
 
 pub use conf::*;
 pub use constant::*;
+pub use result::*;
 
-pub fn main() {
-    let c: Conf = conf::load(None);
+/** Start a libnov process.
 
-    println!("config file:\n{}", serde_yaml::to_string(&c).unwrap());
+`res` is a default return result we would like to use
+in some particular cases.
+
+`f` is a closure we would like to run as a libnov
+process.
+
+`returns` a `Result` specifying if the closure finished
+running with a `NovResultSuccess` or a `NovResultError`. */
+pub fn main(res: NovResult, f: fn(NovResult) -> NovResult) -> NovResult {
+    println!("libnov process started.");
+
+    f(res)
+}
+
+/** Handle the result of a finished libnov process.
+
+`returns` an exit code suitable for passing back to
+the parent shell or execution environment as a status
+indicator of whether the program exited with an error
+or not. */
+pub fn exit(res: NovResult) -> i32 {
+    res.map_or_else(
+        |err| {
+            let (res, code) = err;
+            eprintln!("libnov process exited with error: {}\n{}", &res, code);
+            code
+        },
+        |_res| {
+            const CODE: i32 = 0;
+            println!("libnov process successful exit.\n{}", CODE);
+            CODE
+        },
+    )
 }

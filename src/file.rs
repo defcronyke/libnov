@@ -19,13 +19,13 @@
     https://github.com/gfx-rs/gfx/blob/master/examples/quad/main.rs
 */
 
-use crate::constant::*;
+use crate::{constant::*, result::*};
 use std::{env, fs, path};
 
 pub fn get_path<'a>(
     src: Option<&str>,
     src_prefixes: Option<Vec<&'a str>>,
-) -> Result<(String, Vec<&'a str>), String> {
+) -> Result<(String, Vec<&'a str>), NovResultError> {
     let args: Vec<String> = env::args().collect();
     let args_len = args.len();
 
@@ -62,7 +62,8 @@ pub fn get_path<'a>(
 
         eprintln!("{}", err);
 
-        return Err(err.to_string());
+        // TODO: Use a meaningful `NovResultErrorCode` here.
+        return Err((err.to_string(), 1));
     }
 
     let mut filename_prefixes2 = GET_PATH_DEFAULT_FILE_PREFIXES.to_vec();
@@ -77,8 +78,10 @@ pub fn get_path<'a>(
     }
 
     // Handle absolute paths on Linux/UNIX, macOS, and Windows.
-    if (filename.chars().count() < 2 || first_char != "/") &&
-        (filename.chars().count() < 4 || (second_char.as_str() != ":" && third_char.as_str() != "\\")) {
+    if (filename.chars().count() < 2 || first_char != "/")
+        && (filename.chars().count() < 4
+            || (second_char.as_str() != ":" && third_char.as_str() != "\\"))
+    {
         filename_prefixes2 = filename_prefixes.clone();
     }
 
@@ -115,7 +118,7 @@ error: Looked for file in the following directories: {:?}",
 
         eprintln!("{}", &err);
 
-        return Err(err);
+        return Err((err, 2));
     }
 
     println!("found file: {}", &filename2);
@@ -127,7 +130,7 @@ pub fn read<'a>(
     dst: &mut Vec<u8>,
     src: Option<&str>,
     src_prefixes: Option<Vec<&'a str>>,
-) -> Result<(String, Vec<&'a str>), String> {
+) -> Result<(String, Vec<&'a str>), NovResultError> {
     let (filename, filename_prefixes) = get_path(src, src_prefixes)?;
 
     *dst = fs::read(&filename).map_or_else(
@@ -149,7 +152,7 @@ pub fn read<'a>(
 
         eprintln!("{}", &err);
 
-        return Err(err);
+        return Err((err, 3));
     }
 
     Ok((filename, filename_prefixes))

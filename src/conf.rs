@@ -23,6 +23,8 @@ use crate::constant::*;
 
 use serde::{Deserialize, Serialize};
 
+use std::fmt::Display;
+
 pub trait ConfKind {
     fn new() -> Self;
     fn default() -> Self;
@@ -68,5 +70,11 @@ impl<'a> ConfKind for Conf<'a> {
             file_read_default: GET_PATH_PROJECT_FILENAME,
             file_path_prefixes: GET_PATH_PROJECT_FILE_PREFIXES.to_vec(),
         }
+    }
+}
+
+impl<'a> Display for Conf<'a> {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+        write!(fmt, "{}", &serde_yaml::to_string(self).unwrap())
     }
 }
