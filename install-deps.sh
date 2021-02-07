@@ -36,10 +36,10 @@ install_libnov_deps() {
 
   set -e
 
-  ARCH_DEPS="vulkan-icd-loader lib32-vulkan-icd-loader vulkan-headers cmake"
-  DEBIAN_DEPS="libx11-dev libvulkan-dev libxcb1-dev xorg-dev cmake"
-  FEDORA_DEPS="libX11-devel vulkan cmake"
-  MACOS_DEPS="cmake"
+  ARCH_DEPS="git vulkan-icd-loader lib32-vulkan-icd-loader vulkan-headers cmake"
+  DEBIAN_DEPS="git libx11-dev libvulkan-dev libxcb1-dev xorg-dev cmake"
+  FEDORA_DEPS="git libX11-devel vulkan cmake"
+  MACOS_DEPS="git cmake"
 
   if [ $HAS_CARGO -ne 0 ]; then
     echo "error: The Rust programming language toolchain was not detected. Re-run this script after installing the Rust toolchain from here:"
