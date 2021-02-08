@@ -63,10 +63,11 @@ use hal::{
     window,
 };
 
-use crate::{constant::*, exit, file, result::*};
+use crate::{conf::*, exit, file, result::*};
 
 use std::{
     borrow::Borrow,
+    env,
     io::Cursor,
     iter,
     mem::{self, ManuallyDrop},
@@ -92,160 +93,179 @@ const QUAD: [Vertex; 6] = [
     Vertex { a_Pos: [ -1.28,-1.28 ], a_Uv: [0.0, 0.0] },
 ];
 
-/** Open a window with an image displayed in it.
-The window will be the size of the image.
+pub struct Window {
+    pub c: NovConf,
+}
 
-The image file can be specified as the first command
-line argument to the program calling this function.
-If there's no command line argument, a default image
-will be loaded. */
-pub fn open_image(res: NovResult) {
-    println!("image opening.");
+impl Window {
+    pub fn new(mut c: NovConf) -> Self {
+        let args: Vec<String> = env::args().collect();
+        let args_len = args.len();
 
-    #[cfg(target_arch = "wasm32")]
-    console_log::init_with_level(log::Level::Debug).unwrap();
+        if args_len > 1 {
+            c.set_file_read_default(&args[1]);
+        }
 
-    #[cfg(not(target_arch = "wasm32"))]
-    env_logger::init();
+        Self { c }
+    }
 
-    #[cfg(feature = "dx11")]
-    println!("using gfx-hal backend: dx11");
+    /** Open a window with an image displayed in it.
+    The window will be the size of the image.
 
-    #[cfg(feature = "dx12")]
-    println!("using gfx-hal backend: dx12");
+    The image file can be specified as the first command
+    line argument to the program calling this function.
+    If there's no command line argument, a default image
+    will be loaded. */
+    pub fn open_image(&self, res: NovResult) {
+        println!("image opening.");
 
-    #[cfg(feature = "gl")]
-    println!("using gfx-hal backend: gl");
+        #[cfg(target_arch = "wasm32")]
+        console_log::init_with_level(log::Level::Debug).unwrap();
 
-    #[cfg(feature = "metal")]
-    println!("using gfx-hal backend: metal");
+        #[cfg(not(target_arch = "wasm32"))]
+        env_logger::init();
 
-    #[cfg(feature = "vulkan")]
-    println!("using gfx-hal backend: vulkan");
+        #[cfg(feature = "dx11")]
+        println!("using gfx-hal backend: dx11");
 
-    #[cfg(not(any(
-        feature = "vulkan",
-        feature = "dx11",
-        feature = "dx12",
-        feature = "metal",
-        feature = "gl",
-    )))]
-    eprintln!("using gfx-hal backend: empty");
+        #[cfg(feature = "dx12")]
+        println!("using gfx-hal backend: dx12");
 
-    let event_loop = winit::event_loop::EventLoop::new();
+        #[cfg(feature = "gl")]
+        println!("using gfx-hal backend: gl");
 
-    // Image size.
-    let (img_file_path, _img_file_prefixes) = file::get_path(
-        Some(GET_PATH_PROJECT_FILENAME),
-        Some(GET_PATH_PROJECT_FILE_PREFIXES.to_vec()),
-    )
-    .unwrap_or_else(|err| {
-        std::process::exit(exit(Err(err)));
-    });
+        #[cfg(feature = "metal")]
+        println!("using gfx-hal backend: metal");
 
-    let (width, height) = imagesize::size(&img_file_path)
-        .map(|res| (res.width as u32, res.height as u32))
+        #[cfg(feature = "vulkan")]
+        println!("using gfx-hal backend: vulkan");
+
+        #[cfg(not(any(
+            feature = "vulkan",
+            feature = "dx11",
+            feature = "dx12",
+            feature = "metal",
+            feature = "gl",
+        )))]
+        eprintln!("using gfx-hal backend: empty");
+
+        let event_loop = winit::event_loop::EventLoop::new();
+
+        // Image size.
+        let (img_file_path, _img_file_prefixes) = file::get_path(
+            Some(&self.c.file_read_default),
+            Some(self.c.file_read_directories.clone()),
+        )
         .unwrap_or_else(|err| {
-            // TODO: Use a meaningful result code here.
-            std::process::exit(exit(Err((err.to_string(), 4))));
+            std::process::exit(exit(Err(err)));
         });
 
-    println!(
-        "got image size for file: {}: ({}, {})",
-        &img_file_path, width, height
-    );
+        let (width, height) = imagesize::size(&img_file_path)
+            .map(|res| (res.width as u32, res.height as u32))
+            .unwrap_or_else(|err| {
+                // TODO: Use a meaningful result code here.
+                std::process::exit(exit(Err((err.to_string(), 4))));
+            });
 
-    #[cfg_attr(rustfmt, rustfmt_skip)]
-	let dims: window::Extent2D = window::Extent2D { width, height };
+        println!(
+            "got image size for file: {}: ({}, {})",
+            &img_file_path, width, height
+        );
 
-    println!("window opening.");
+        #[cfg_attr(rustfmt, rustfmt_skip)]
+	    let dims: window::Extent2D = window::Extent2D { width, height };
 
-    let wb = winit::window::WindowBuilder::new()
-        .with_min_inner_size(winit::dpi::Size::Logical(winit::dpi::LogicalSize::new(
-            64.0, 64.0,
-        )))
-        .with_inner_size(winit::dpi::Size::Physical(winit::dpi::PhysicalSize::new(
-            dims.width,
-            dims.height,
-        )))
-        .with_title("libnov image window".to_string());
+        println!("window opening.");
 
-    // instantiate backend
-    let window = wb.build(&event_loop).unwrap();
+        let wb = winit::window::WindowBuilder::new()
+            .with_min_inner_size(winit::dpi::Size::Logical(winit::dpi::LogicalSize::new(
+                64.0, 64.0,
+            )))
+            .with_inner_size(winit::dpi::Size::Physical(winit::dpi::PhysicalSize::new(
+                dims.width,
+                dims.height,
+            )))
+            .with_title("libnov image window".to_string());
 
-    #[cfg(target_arch = "wasm32")]
-    web_sys::window()
-        .unwrap()
-        .document()
-        .unwrap()
-        .body()
-        .unwrap()
-        .append_child(&winit::platform::web::WindowExtWebSys::canvas(&window))
-        .unwrap();
+        // instantiate backend
+        let window = wb.build(&event_loop).unwrap();
 
-    let instance =
-        back::Instance::create("libnov image window", 1).expect("Failed to create an instance!");
+        #[cfg(target_arch = "wasm32")]
+        web_sys::window()
+            .unwrap()
+            .document()
+            .unwrap()
+            .body()
+            .unwrap()
+            .append_child(&winit::platform::web::WindowExtWebSys::canvas(&window))
+            .unwrap();
 
-    let surface = unsafe {
-        instance
-            .create_surface(&window)
-            .expect("Failed to create a surface!")
-    };
+        let instance = back::Instance::create("libnov image window", 1)
+            .expect("Failed to create an instance!");
 
-    let adapter = {
-        let mut adapters = instance.enumerate_adapters();
-        for adapter in &adapters {
-            println!("{:?}", adapter.info);
-        }
-        adapters.remove(0)
-    };
+        let surface = unsafe {
+            instance
+                .create_surface(&window)
+                .expect("Failed to create a surface!")
+        };
 
-    println!("renderer starting.");
-    let mut renderer = Renderer::new(instance, surface, adapter);
+        let adapter = {
+            let mut adapters = instance.enumerate_adapters();
+            for adapter in &adapters {
+                println!("{:?}", adapter.info);
+            }
+            adapters.remove(0)
+        };
 
-    renderer.render();
+        println!("renderer starting.");
+        let mut renderer = Renderer::new(instance, surface, adapter, self.c.clone());
 
-    println!("event loop starting.");
+        renderer.render();
 
-    // It is important that the closure move captures the Renderer,
-    // otherwise it will not be dropped when the event loop exits.
-    event_loop.run(move |event, _, control_flow| {
-        *control_flow = winit::event_loop::ControlFlow::Wait;
+        println!("event loop starting.");
 
-        match event {
-            winit::event::Event::WindowEvent { event, .. } => match event {
-                winit::event::WindowEvent::CloseRequested => {
-                    let _exit_code = exit(res.clone());
-                    *control_flow = winit::event_loop::ControlFlow::Exit;
-                }
-                winit::event::WindowEvent::KeyboardInput {
-                    input:
-                        winit::event::KeyboardInput {
-                            virtual_keycode: Some(winit::event::VirtualKeyCode::Escape),
-                            ..
-                        },
-                    ..
-                } => {
-                    let _exit_code = exit(res.clone());
-                    *control_flow = winit::event_loop::ControlFlow::Exit;
-                }
-                winit::event::WindowEvent::Resized(dims) => {
-                    println!("resized to {:?}", dims);
-                    renderer.dimensions = window::Extent2D {
-                        width: dims.width,
-                        height: dims.height,
-                    };
-                    renderer.recreate_swapchain();
+        // It is important that the closure move captures the Renderer,
+        // otherwise it will not be dropped when the event loop exits.
+        event_loop.run(move |event, _, control_flow| {
+            *control_flow = winit::event_loop::ControlFlow::Wait;
+
+            match event {
+                winit::event::Event::WindowEvent { event, .. } => match event {
+                    winit::event::WindowEvent::CloseRequested => {
+                        let _exit_code = exit(res.clone());
+                        *control_flow = winit::event_loop::ControlFlow::Exit;
+                    }
+                    winit::event::WindowEvent::KeyboardInput {
+                        input:
+                            winit::event::KeyboardInput {
+                                virtual_keycode: Some(winit::event::VirtualKeyCode::Escape),
+                                ..
+                            },
+                        ..
+                    } => {
+                        let _exit_code = exit(res.clone());
+                        *control_flow = winit::event_loop::ControlFlow::Exit;
+                    }
+                    winit::event::WindowEvent::Resized(dims) => {
+                        println!("resized to {:?}", dims);
+                        renderer.dimensions = window::Extent2D {
+                            width: dims.width,
+                            height: dims.height,
+                        };
+                        renderer.recreate_swapchain();
+                    }
+                    _ => {}
+                },
+                winit::event::Event::RedrawEventsCleared => {
+                    renderer.render();
                 }
                 _ => {}
-            },
-            winit::event::Event::RedrawEventsCleared => {
-                renderer.render();
             }
-            _ => {}
-        }
-    });
+        });
+    }
 }
+
+// pub fn open_image(res: NovResult) {}
 
 struct Renderer<B: hal::Backend> {
     desc_pool: ManuallyDrop<B::DescriptorPool>,
@@ -278,6 +298,7 @@ struct Renderer<B: hal::Backend> {
     adapter: hal::adapter::Adapter<B>,
     queue_group: QueueGroup<B>,
     instance: B::Instance,
+    c: NovConf,
 }
 
 impl<B> Renderer<B>
@@ -288,6 +309,7 @@ where
         instance: B::Instance,
         mut surface: B::Surface,
         adapter: hal::adapter::Adapter<B>,
+        c: NovConf,
     ) -> Renderer<B> {
         let memory_types = adapter.physical_device.memory_properties().memory_types;
         let limits = adapter.physical_device.limits();
@@ -424,8 +446,8 @@ where
 
         let (_img_filename, _img_file_prefixes) = file::read(
             &mut img_data,
-            Some(GET_PATH_PROJECT_FILENAME),
-            Some(GET_PATH_PROJECT_FILE_PREFIXES.to_vec()),
+            Some(&c.file_read_default),
+            Some(c.file_read_directories.clone()),
         )
         .unwrap();
 
@@ -877,6 +899,7 @@ where
             sampler,
             frames_in_flight,
             frame: 0,
+            c,
         }
     }
 
@@ -1061,6 +1084,9 @@ where
             let surface = ManuallyDrop::into_inner(ptr::read(&self.surface));
             self.instance.destroy_surface(surface);
         }
-        println!("window closed.");
+        println!(
+            "image window closed with file: {}",
+            self.c.file_read_default
+        );
     }
 }

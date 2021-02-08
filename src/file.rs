@@ -20,42 +20,50 @@
 */
 
 use crate::{constant::*, result::*};
-use std::{env, fs, path};
+use std::{fs, path};
 
-pub fn get_path<'a>(
+pub fn get_path(
     src: Option<&str>,
-    src_prefixes: Option<Vec<&'a str>>,
-) -> Result<(String, Vec<&'a str>), NovResultError> {
-    let args: Vec<String> = env::args().collect();
-    let args_len = args.len();
+    src_prefixes: Option<Vec<String>>,
+) -> Result<(String, Vec<String>), NovResultError> {
+    // let args: Vec<String> = env::args().collect();
+    // let args_len = args.len();
 
-    let filename_prefixes: Vec<&str> = src_prefixes
-        .unwrap_or(GET_PATH_DEFAULT_FILE_PREFIXES.to_vec())
+    let filename_prefixes: Vec<String> = src_prefixes
+        .unwrap_or(
+            GET_PATH_DEFAULT_FILE_PREFIXES
+                .to_vec()
+                .iter()
+                .map(|res| res.to_string())
+                .collect(),
+        )
         .into_iter()
-        .map(|res| path::Path::new(res).to_str().unwrap())
+        .map(|res| path::Path::new(&res).to_str().unwrap().to_string())
         .collect();
 
-    let mut filename = "".to_string();
+    let filename = src.map_or(GET_PATH_PROJECT_FILENAME.to_string(), |res| res.to_string());
+
+    // let mut filename = "".to_string();
     let mut filename2 = path::PathBuf::new();
 
-    if args_len <= 1 {
-        filename = path::Path::new(&src.map_or_else(|| filename, |res| res.to_string()))
-            .to_str()
-            .unwrap()
-            .to_string();
+    // if args_len <= 1 {
+    //     filename = path::Path::new(&src.map_or_else(|| filename, |res| res.to_string()))
+    //         .to_str()
+    //         .unwrap()
+    //         .to_string();
 
-        println!("get_path() invoked with src parameter: {}", filename);
-    } else if args_len > 1 {
-        println!(
-            "get_path() invoked with command line arguments: {:?}",
-            args[1..].to_vec()
-        );
+    //     println!("get_path() invoked with src parameter: {}", filename);
+    // } else if args_len > 1 {
+    //     println!(
+    //         "get_path() invoked with command line arguments: {:?}",
+    //         args[1..].to_vec()
+    //     );
 
-        filename = path::Path::new(&args[1].clone())
-            .to_str()
-            .unwrap()
-            .to_string();
-    }
+    //     filename = path::Path::new(&args[1].clone())
+    //         .to_str()
+    //         .unwrap()
+    //         .to_string();
+    // }
 
     if filename.chars().count() == 0 {
         let err = "No filename specified.";
@@ -66,7 +74,11 @@ pub fn get_path<'a>(
         return Err((err.to_string(), 1));
     }
 
-    let mut filename_prefixes2 = GET_PATH_DEFAULT_FILE_PREFIXES.to_vec();
+    let mut filename_prefixes2 = GET_PATH_DEFAULT_FILE_PREFIXES
+        .to_vec()
+        .iter()
+        .map(|res| res.to_string())
+        .collect();
 
     let first_char: &str = &filename.chars().nth(0).unwrap().to_string();
     let mut second_char = "".to_string();
@@ -94,9 +106,10 @@ looking for file in the following directories: {:?}",
     let mut file_found = false;
 
     for filename_prefix in filename_prefixes2.clone() {
-        filename2 = path::Path::new(filename_prefix).join(&filename);
+        filename2 = path::Path::new(&filename_prefix).join(&filename);
 
         if filename2.exists() {
+            println!("found file in directory: {:?}", &filename_prefix);
             file_found = true;
             break;
         }
@@ -115,11 +128,11 @@ looking for file in the following directories: {:?}",
     Ok((filename2.to_str().unwrap().to_string(), filename_prefixes2))
 }
 
-pub fn read<'a>(
+pub fn read(
     dst: &mut Vec<u8>,
     src: Option<&str>,
-    src_prefixes: Option<Vec<&'a str>>,
-) -> Result<(String, Vec<&'a str>), NovResultError> {
+    src_prefixes: Option<Vec<String>>,
+) -> Result<(String, Vec<String>), NovResultError> {
     let (filename, filename_prefixes) = get_path(src, src_prefixes)?;
 
     *dst = fs::read(&filename).map_or_else(

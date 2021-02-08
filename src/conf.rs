@@ -32,7 +32,16 @@ pub trait ConfKind {
     fn to_yaml(&self) -> String;
     fn from_yaml(s: String) -> Self;
     fn is_empty(&self) -> bool;
+    fn set_file_read_default(&mut self, filename: &str);
 }
+
+#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+pub struct NovConf {
+    pub file_read_directories: Vec<String>,
+    pub file_read_default: String,
+}
+
+impl NovConf {}
 
 /** Load a config file.
 
@@ -49,7 +58,13 @@ pub fn load<T: ConfKind>(filename: Option<&str>) -> Result<T, NovResultError> {
     let new_file = file::read(
         &mut file_content,
         Some(filename2),
-        Some(CONF_FILE_DEFAULT_PREFIXES.to_vec()),
+        Some(
+            CONF_FILE_DEFAULT_PREFIXES
+                .to_vec()
+                .iter()
+                .map(|res| res.to_string())
+                .collect(),
+        ),
     )
     .map_or_else(
         |_err| {
@@ -63,7 +78,6 @@ pub fn load<T: ConfKind>(filename: Option<&str>) -> Result<T, NovResultError> {
         |res| {
             let (filename, _prefixes) = res;
             println!("config file found: {}", filename);
-            println!("loading config from file:");
 
             false
         },
@@ -72,38 +86,31 @@ pub fn load<T: ConfKind>(filename: Option<&str>) -> Result<T, NovResultError> {
     if new_file {
         let c = T::default();
         fs::write(CONF_FILE_DEFAULT, c.to_yaml()).unwrap();
-        println!("{}", &c.to_yaml());
+        println!("config loaded:\n{}", &c.to_yaml());
 
         Ok(c)
     } else {
         let c = T::from_yaml(std::str::from_utf8(&file_content).unwrap().to_string());
 
         if c.is_empty() {
-            let err = "there is some problem in the config file".to_string();
+            let err = "There is some problem in the conf.yaml config file. \
+If you can't solve it, you can delete the file and a new one will be \
+created with default values."
+                .to_string();
             eprintln!("error: {}", err);
 
             return Err((err, 8));
         }
 
-        println!("{}", &c.to_yaml());
+        println!("config loaded:\n{}", &c.to_yaml());
 
         Ok(c)
     }
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
-pub struct NovConf {
-    pub conf_file_directories: Vec<String>,
-    pub file_read_directories: Vec<String>,
-    pub file_read_default: String,
-}
-
-impl NovConf {}
-
 impl ConfKind for NovConf {
     fn new() -> Self {
         Self {
-            conf_file_directories: vec![],
             file_read_directories: vec![],
             file_read_default: "".to_string(),
         }
@@ -111,11 +118,6 @@ impl ConfKind for NovConf {
 
     fn default() -> Self {
         Self {
-            conf_file_directories: CONF_FILE_DEFAULT_PREFIXES
-                .to_vec()
-                .iter()
-                .map(|val| val.to_string())
-                .collect(),
             file_read_directories: GET_PATH_PROJECT_FILE_PREFIXES
                 .to_vec()
                 .iter()
@@ -137,11 +139,11 @@ impl ConfKind for NovConf {
     }
 
     fn is_empty(&self) -> bool {
-        if self.conf_file_directories.len() == 0 {
-            true
-        } else {
-            false
-        }
+        *self == NovConf::new()
+    }
+
+    fn set_file_read_default(&mut self, filename: &str) {
+        self.file_read_default = filename.to_string();
     }
 }
 
