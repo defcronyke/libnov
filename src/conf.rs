@@ -19,62 +19,134 @@
     https://github.com/gfx-rs/gfx/blob/master/examples/quad/main.rs
 */
 
-use crate::constant::*;
+use crate::{constant::*, file, NovResultError};
 
 use serde::{Deserialize, Serialize};
 
 use std::fmt::Display;
+use std::fs;
 
 pub trait ConfKind {
     fn new() -> Self;
     fn default() -> Self;
+    fn to_yaml(&self) -> String;
+    fn from_yaml(s: String) -> Self;
+    fn is_empty(&self) -> bool;
 }
 
-pub fn load<T: ConfKind>(filename: Option<&str>) -> T {
-    let filename2 = filename.map_or_else(
-        || {
-            println!("loading default config values.");
-            ""
+/** Load a config file.
+
+`filename` is the config file to load. If it's `None`,
+a default path will be tried. If a config file isn't
+found at the path, a new one will be created and filled
+with initial default values.
+
+`returns` a struct containing the config file's values. */
+pub fn load<T: ConfKind>(filename: Option<&str>) -> Result<T, NovResultError> {
+    let filename2 = filename.unwrap_or(CONF_FILE_DEFAULT);
+
+    let mut file_content = Vec::<u8>::new();
+    let new_file = file::read(
+        &mut file_content,
+        Some(filename2),
+        Some(CONF_FILE_DEFAULT_PREFIXES.to_vec()),
+    )
+    .map_or_else(
+        |_err| {
+            println!(
+                "Config file not found. Creating a new one: {}",
+                CONF_FILE_DEFAULT
+            );
+
+            true
         },
         |res| {
-            println!("loading config file: {}", res);
-            res
+            let (filename, _prefixes) = res;
+            println!("config file found: {}", filename);
+            println!("loading config from file:");
+
+            false
         },
     );
 
-    if filename2 == "" {
-        T::default()
+    if new_file {
+        let c = T::default();
+        fs::write(CONF_FILE_DEFAULT, c.to_yaml()).unwrap();
+        println!("{}", &c.to_yaml());
+
+        Ok(c)
     } else {
-        T::new()
+        let c = T::from_yaml(std::str::from_utf8(&file_content).unwrap().to_string());
+
+        if c.is_empty() {
+            let err = "there is some problem in the config file".to_string();
+            eprintln!("error: {}", err);
+
+            return Err((err, 8));
+        }
+
+        println!("{}", &c.to_yaml());
+
+        Ok(c)
     }
 }
 
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
-pub struct Conf<'a> {
-    pub file_read_default: &'a str,
-    pub file_path_prefixes: Vec<&'a str>,
+pub struct NovConf {
+    pub conf_file_directories: Vec<String>,
+    pub file_read_directories: Vec<String>,
+    pub file_read_default: String,
 }
 
-impl<'a> Conf<'a> {}
+impl NovConf {}
 
-impl<'a> ConfKind for Conf<'a> {
+impl ConfKind for NovConf {
     fn new() -> Self {
         Self {
-            file_read_default: "",
-            file_path_prefixes: vec![],
+            conf_file_directories: vec![],
+            file_read_directories: vec![],
+            file_read_default: "".to_string(),
         }
     }
 
     fn default() -> Self {
         Self {
-            file_read_default: GET_PATH_PROJECT_FILENAME,
-            file_path_prefixes: GET_PATH_PROJECT_FILE_PREFIXES.to_vec(),
+            conf_file_directories: CONF_FILE_DEFAULT_PREFIXES
+                .to_vec()
+                .iter()
+                .map(|val| val.to_string())
+                .collect(),
+            file_read_directories: GET_PATH_PROJECT_FILE_PREFIXES
+                .to_vec()
+                .iter()
+                .map(|val| val.to_string())
+                .collect(),
+            file_read_default: GET_PATH_PROJECT_FILENAME.to_string(),
+        }
+    }
+
+    fn to_yaml(&self) -> String {
+        serde_yaml::to_string(self).unwrap()
+    }
+
+    fn from_yaml(s: String) -> Self {
+        serde_yaml::from_str(&s).unwrap_or_else(|err| {
+            eprintln!("error: {}", err);
+            Self::new()
+        })
+    }
+
+    fn is_empty(&self) -> bool {
+        if self.conf_file_directories.len() == 0 {
+            true
+        } else {
+            false
         }
     }
 }
 
-impl<'a> Display for Conf<'a> {
+impl Display for NovConf {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
-        write!(fmt, "{}", &serde_yaml::to_string(self).unwrap())
+        write!(fmt, "{}", &serde_json::to_string_pretty(&self).unwrap())
     }
 }

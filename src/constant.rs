@@ -21,6 +21,17 @@
 
 pub const GET_PATH_DEFAULT_FILE_PREFIXES: [&str; 1] = [""];
 
+pub const CONF_FILE_DEFAULT_PREFIXES: [&str; 6] = [
+    GET_PATH_DEFAULT_FILE_PREFIXES[0],
+    "../",
+    "nov/",
+    "../nov/",
+    "libnov/",
+    "../libnov/",
+];
+
+pub const CONF_FILE_DEFAULT: &str = "conf.yaml";
+
 /// Search these directories when calling `file::get_path()`.
 pub const GET_PATH_PROJECT_FILE_PREFIXES: [&str; 7] = [
     GET_PATH_DEFAULT_FILE_PREFIXES[0],

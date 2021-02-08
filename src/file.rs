@@ -36,7 +36,7 @@ pub fn get_path<'a>(
         .collect();
 
     let mut filename = "".to_string();
-    let mut filename2 = String::new();
+    let mut filename2 = path::PathBuf::new();
 
     if args_len <= 1 {
         filename = path::Path::new(&src.map_or_else(|| filename, |res| res.to_string()))
@@ -58,9 +58,9 @@ pub fn get_path<'a>(
     }
 
     if filename.chars().count() == 0 {
-        let err = "error: No filename specified.";
+        let err = "No filename specified.";
 
-        eprintln!("{}", err);
+        eprintln!("error: {}", err);
 
         // TODO: Use a meaningful `NovResultErrorCode` here.
         return Err((err.to_string(), 1));
@@ -94,36 +94,25 @@ looking for file in the following directories: {:?}",
     let mut file_found = false;
 
     for filename_prefix in filename_prefixes2.clone() {
-        filename2 = path::Path::new(&format!("{}{}", filename_prefix, &filename))
-            .to_str()
-            .unwrap()
-            .to_string();
+        filename2 = path::Path::new(filename_prefix).join(&filename);
 
-        println!("checking if file exists: {}", &filename2);
-
-        if path::Path::new(&filename2).exists() {
+        if filename2.exists() {
             file_found = true;
             break;
         }
-
-        println!("file not found: {}", &filename2);
     }
 
     if !file_found {
-        let err = format!(
-            "error: File not found: {}
-error: Looked for file in the following directories: {:?}",
-            &filename, filename_prefixes2
-        );
+        let err = format!("File not found: {}", &filename);
 
-        eprintln!("{}", &err);
+        eprintln!("error: {}", &err);
 
         return Err((err, 2));
     }
 
-    println!("found file: {}", &filename2);
+    println!("found file: {}", filename2.display());
 
-    Ok((filename2, filename_prefixes2))
+    Ok((filename2.to_str().unwrap().to_string(), filename_prefixes2))
 }
 
 pub fn read<'a>(
@@ -135,22 +124,21 @@ pub fn read<'a>(
 
     *dst = fs::read(&filename).map_or_else(
         |err| {
-            eprintln!("error: Failed reading file: {}: {}", &filename, err);
-            vec![]
+            let err2 = format!("Failed reading file: {}: {}", &filename, err);
+            eprintln!("error: {}", err2);
+            // TODO: Use a meaningful error code here.
+            Err((err2.to_string(), 6))
         },
         |res| {
             println!("successfully read file: {}", &filename);
-            res
+            Ok(res)
         },
-    );
+    )?;
 
     if dst.is_empty() {
-        let err = format!(
-            "error: Empty result after trying to read file: {}",
-            &filename
-        );
+        let err = format!("Empty result after trying to read file: {}", &filename);
 
-        eprintln!("{}", &err);
+        eprintln!("error: {}", &err);
 
         return Err((err, 3));
     }
