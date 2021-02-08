@@ -10,16 +10,16 @@ passing the image filename as the first command
 line argument, otherwise a default image will be
 loaded. */
 fn main() {
-    println!("Starting load-image...\n");
+    println!("Starting load-image...");
     println!(
-        "You can run this with a filename as the first argument \
+        "\nYou can run this with a filename as the first argument \
 to specify which image to load, otherwise a default image will be loaded.\n"
     );
 
     let res = libnov::main(Ok(()), |res| {
         /* This function never returns, so we pass in a default
         exit result to display when the window closes. */
-        window::open(res.clone());
+        window::open_image(res.clone());
 
         res
     });

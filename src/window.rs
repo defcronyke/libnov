@@ -92,8 +92,15 @@ const QUAD: [Vertex; 6] = [
     Vertex { a_Pos: [ -1.28,-1.28 ], a_Uv: [0.0, 0.0] },
 ];
 
-pub fn open(res: NovResult) {
-    println!("window opening.");
+/** Open a window with an image displayed in it.
+The window will be the size of the image.
+
+The image file can be specified as the first command
+line argument to the program calling this function.
+If there's no command line argument, a default image
+will be loaded. */
+pub fn open_image(res: NovResult) {
+    println!("image opening.");
 
     #[cfg(target_arch = "wasm32")]
     console_log::init_with_level(log::Level::Debug).unwrap();
@@ -127,7 +134,7 @@ pub fn open(res: NovResult) {
 
     let event_loop = winit::event_loop::EventLoop::new();
 
-    // Image size
+    // Image size.
     let (img_file_path, _img_file_prefixes) = file::get_path(
         Some(GET_PATH_PROJECT_FILENAME),
         Some(GET_PATH_PROJECT_FILE_PREFIXES.to_vec()),
@@ -151,6 +158,8 @@ pub fn open(res: NovResult) {
     #[cfg_attr(rustfmt, rustfmt_skip)]
 	let dims: window::Extent2D = window::Extent2D { width, height };
 
+    println!("window opening.");
+
     let wb = winit::window::WindowBuilder::new()
         .with_min_inner_size(winit::dpi::Size::Logical(winit::dpi::LogicalSize::new(
             64.0, 64.0,
@@ -159,7 +168,7 @@ pub fn open(res: NovResult) {
             dims.width,
             dims.height,
         )))
-        .with_title("libnov load-image test".to_string());
+        .with_title("libnov image window".to_string());
 
     // instantiate backend
     let window = wb.build(&event_loop).unwrap();
@@ -175,7 +184,7 @@ pub fn open(res: NovResult) {
         .unwrap();
 
     let instance =
-        back::Instance::create("libnov load-image test", 1).expect("Failed to create an instance!");
+        back::Instance::create("libnov image window", 1).expect("Failed to create an instance!");
 
     let surface = unsafe {
         instance
@@ -191,9 +200,12 @@ pub fn open(res: NovResult) {
         adapters.remove(0)
     };
 
+    println!("renderer starting.");
     let mut renderer = Renderer::new(instance, surface, adapter);
 
     renderer.render();
+
+    println!("event loop starting.");
 
     // It is important that the closure move captures the Renderer,
     // otherwise it will not be dropped when the event loop exits.
@@ -407,7 +419,7 @@ where
             ManuallyDrop::new(memory)
         };
 
-        // Image
+        // Image.
         let mut img_data = Vec::<u8>::new();
 
         let (_img_filename, _img_file_prefixes) = file::read(
