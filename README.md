@@ -6,4 +6,6 @@ Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
   
 Rust version  
   
-Details will be added later.  
+See the parent git repository for details:  
+[https://github.com/defcronyke/hobnob](https://github.com/defcronyke/hobnob)  
+[https://gitlab.com/defcronyke/hobnob](https://gitlab.com/defcronyke/hobnob)  
