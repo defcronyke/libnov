@@ -26,9 +26,6 @@ pub fn get_path(
     src: Option<&str>,
     src_prefixes: Option<Vec<String>>,
 ) -> Result<(String, Vec<String>), NovResultError> {
-    // let args: Vec<String> = env::args().collect();
-    // let args_len = args.len();
-
     let filename_prefixes: Vec<String> = src_prefixes
         .unwrap_or(
             GET_PATH_DEFAULT_FILE_PREFIXES
@@ -42,28 +39,7 @@ pub fn get_path(
         .collect();
 
     let filename = src.map_or(GET_PATH_PROJECT_FILENAME.to_string(), |res| res.to_string());
-
-    // let mut filename = "".to_string();
     let mut filename2 = path::PathBuf::new();
-
-    // if args_len <= 1 {
-    //     filename = path::Path::new(&src.map_or_else(|| filename, |res| res.to_string()))
-    //         .to_str()
-    //         .unwrap()
-    //         .to_string();
-
-    //     println!("get_path() invoked with src parameter: {}", filename);
-    // } else if args_len > 1 {
-    //     println!(
-    //         "get_path() invoked with command line arguments: {:?}",
-    //         args[1..].to_vec()
-    //     );
-
-    //     filename = path::Path::new(&args[1].clone())
-    //         .to_str()
-    //         .unwrap()
-    //         .to_string();
-    // }
 
     if filename.chars().count() == 0 {
         let err = "No filename specified.";
