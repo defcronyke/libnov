@@ -17,7 +17,7 @@
 
 extern crate libnov;
 
-use libnov::{conf::*, window::*};
+use libnov::{conf::*, view::*, window::*};
 
 /** An example which opens a window with an image
 loaded in it.
@@ -36,7 +36,7 @@ a default image will be loaded.
 "
     );
 
-    let res = libnov::main(Ok(()), |res| {
+    let res = libnov::main(Ok(()), |_view: &mut View, res| {
         /* This function never returns, so we pass in a default
         exit result to display when the window closes. */
         Window::new(NovConf::default()).open_image(res.clone());

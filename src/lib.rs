@@ -19,11 +19,19 @@ pub mod conf;
 pub mod constant;
 pub mod file;
 pub mod result;
+pub mod view;
 pub mod window;
+
+#[cfg(feature = "python")]
+pub mod python;
 
 pub use conf::*;
 pub use constant::*;
 pub use result::*;
+pub use view::*;
+
+#[cfg(feature = "python")]
+pub use python::*;
 
 /** Start a libnov process.
 
@@ -35,10 +43,12 @@ process.
 
 `returns` a `Result` specifying if the closure finished
 running with a `NovResultSuccess` or a `NovResultError`. */
-pub fn main(res: NovResult, f: fn(NovResult) -> NovResult) -> NovResult {
+pub fn main<T: ViewKind>(res: NovResult, f: fn(&mut T, NovResult) -> NovResult) -> NovResult {
     println!("libnov process started.");
 
-    f(res)
+    let mut view = view::new();
+
+    f(&mut view, res)
 }
 
 /** Handle the result of a finished libnov process.

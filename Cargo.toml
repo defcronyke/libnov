@@ -33,6 +33,13 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+name = "libnov"
+
+[[bin]]
+name = "load-image"
+path = "cmd/load-image/main.rs"
+
 [features]
 default = []
 metal = ["gfx-backend-metal"]
@@ -41,13 +48,7 @@ dx11 = ["gfx-backend-dx11"]
 dx12 = ["gfx-backend-dx12"]
 vulkan = ["gfx-backend-vulkan"]
 unstable = []
-
-[lib]
-name = "libnov"
-
-[[bin]]
-name = "load-image"
-path = "cmd/load-image/main.rs"
+python = ["pyembed"]
 
 [dependencies]
 image = "0.23"
@@ -60,6 +61,11 @@ gfx-backend-empty = { version = "0.7" }
 hal = { version = "0.7", package = "gfx-hal" }
 auxil = { version = "0.8", package = "gfx-auxil" }
 winit = { version = "0.24", features = ["web-sys"] }
+
+[dependencies.pyembed]
+git = "https://github.com/indygreg/PyOxidizer"
+branch = "main"
+optional = true
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 env_logger = "0.8"
