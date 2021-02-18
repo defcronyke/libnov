@@ -13,10 +13,6 @@
     so furthermore, whenever legally possible, all license
     terms from all of the different technologies apply, with
     this project's license terms taking first priority.
-
-    NOTE: This file includes some possibly modified example
-    code from:
-    https://github.com/gfx-rs/gfx/blob/master/examples/quad/main.rs
 */
 
 use crate::{constant::*, file, NovResultError};
