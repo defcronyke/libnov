@@ -18,6 +18,15 @@
 install_correct_python_version() {
 	echo "Installing python."
 
+	which pyenv >/dev/null
+	if [ $? -ne 0 ]; then
+		echo "Installing pyenv."
+		curl -sL "https://pyenv.run" | bash
+		exec "$SHELL"
+	else
+		echo "Not installing pyenv because it's already installed."
+	fi
+
 	SHELL_PROFILE_FILE=$(if [ "$BASH_ENV" == "$HOME/.bashrc" ]; then echo "$HOME/.bash_profile"; else echo "$HOME/.bashrc"; fi)
 	PYENV_PROFILE_STR='if command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi\n'
 	
