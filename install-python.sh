@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 #
 # All uses of this project in part or in whole are governed
@@ -32,6 +32,8 @@ install_correct_python_version() {
 
 		# exec "$SHELL"
 		source "$SHELL_PROFILE_FILE"
+
+		ls -al "$HOME/.pyenv/bin"
 
 		echo "PATH=\"$PATH\""
 
