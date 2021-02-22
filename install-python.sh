@@ -19,7 +19,6 @@ install_correct_python_version() {
 	echo "Installing python."
 
 	SHELL_PROFILE_FILE=$(if [ "$BASH_ENV" == "$HOME/.bashrc" ]; then echo "$HOME/.bash_profile"; else echo "$HOME/.bashrc"; fi)
-	# PYENV_PROFILE_STR='echo "$HOME/.pyenv/bin" >> "$GITHUB_PATH"\necho "$HOME/.pyenv/libexec" >> "$GITHUB_PATH"\n\nif command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi\n'
 	PYENV_PROFILE_STR='\nexport PATH="$HOME/.pyenv/bin:$PATH"\n\nif command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi\n'
 	
 	which pyenv >/dev/null
@@ -31,16 +30,12 @@ install_correct_python_version() {
 		echo "SHELL_PROFILE_FILE=\"$SHELL_PROFILE_FILE\""
 		cat "$SHELL_PROFILE_FILE"
 
-		# exec "$SHELL"
 		source "$SHELL_PROFILE_FILE"
 
 		ls -al "$HOME/.pyenv/bin"
-
 		ls -al "$HOME/.pyenv/libexec"
 
 		echo "PATH=\"$PATH\""
-		# echo "GITHUB_PATH=\"$GITHUB_PATH\""
-		# cat "$GITHUB_PATH"
 
 	else
 		echo "Not installing pyenv because it's already installed."
@@ -50,7 +45,6 @@ install_correct_python_version() {
 	if [ $? -ne 0 ]; then
 		echo "Adding pyenv to shell profile: $SHELL_PROFILE_FILE"
 		echo -e "$PYENV_PROFILE_STR" >> "$SHELL_PROFILE_FILE"
-		# exec "$SHELL"
 		source "$SHELL_PROFILE_FILE"
 	else
 		echo "Not adding pyenv to shell profile because it's already there: $SHELL_PROFILE_FILE"
