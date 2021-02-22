@@ -19,8 +19,8 @@ install_correct_python_version() {
 	echo "Installing python."
 
 	SHELL_PROFILE_FILE=$(if [ "$BASH_ENV" == "$HOME/.bashrc" ]; then echo "$HOME/.bash_profile"; else echo "$HOME/.bashrc"; fi)
-	PYENV_PROFILE_STR='echo "$HOME/.pyenv/bin" >> "$GITHUB_PATH"\necho "$HOME/.pyenv/libexec" >> "$GITHUB_PATH"\n\nif command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi\n'
-	# PYENV_PROFILE_STR='export PATH="$PATH:$HOME/.pyenv/bin:$HOME/.pyenv/libexec"\n\nif command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi\n'
+	# PYENV_PROFILE_STR='echo "$HOME/.pyenv/bin" >> "$GITHUB_PATH"\necho "$HOME/.pyenv/libexec" >> "$GITHUB_PATH"\n\nif command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi\n'
+	PYENV_PROFILE_STR='\nif command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi\n'
 	
 	which pyenv >/dev/null
 	if [ $? -ne 0 ]; then
@@ -39,8 +39,8 @@ install_correct_python_version() {
 		ls -al "$HOME/.pyenv/libexec"
 
 		echo "PATH=\"$PATH\""
-		echo "GITHUB_PATH=\"$GITHUB_PATH\""
-		cat "$GITHUB_PATH"
+		# echo "GITHUB_PATH=\"$GITHUB_PATH\""
+		# cat "$GITHUB_PATH"
 
 	else
 		echo "Not installing pyenv because it's already installed."
