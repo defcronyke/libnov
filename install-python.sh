@@ -19,7 +19,7 @@ install_correct_python_version() {
 	echo "Installing python."
 
 	SHELL_PROFILE_FILE=$(if [ "$BASH_ENV" == "$HOME/.bashrc" ]; then echo "$HOME/.bash_profile"; else echo "$HOME/.bashrc"; fi)
-	PYENV_PROFILE_STR='export PATH="'$HOME'/.pyenv/bin:'$PATH'"\n\nif command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi\n'
+	PYENV_PROFILE_STR='export PATH="'$HOME'/.pyenv/bin:$PATH"\n\nif command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi\n'
 	
 	which pyenv >/dev/null
 	if [ $? -ne 0 ]; then
