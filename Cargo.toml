@@ -50,8 +50,8 @@ vulkan = ["gfx-backend-vulkan"]
 unstable = []
 python = [
 	"pyembed", 
-	"cpython",
-	"python3-sys",
+	# "cpython",
+	# "python3-sys",
 ]
 
 [dependencies]
@@ -78,20 +78,20 @@ features = [
 	# "build-mode-default",
 ]
 
-[dependencies.cpython]
+[dependencies.pyembed.dependencies.cpython]
 version = "0.5"
-optional = true
+# optional = true
 features = [
 	"serde",
 	# "py-link-mode-unresolved-static",
 	# "no-auto-initialize",
 ]
 
-[dependencies.python3-sys]
+[dependencies.pyembed.dependencies.python3-sys]
 version = "0.5"
-optional = true
+# optional = true
 features = [
-	# "extension-module",
+	"extension-module",
 	# "link-mode-unresolved-static",
 ]
 
