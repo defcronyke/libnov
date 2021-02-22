@@ -73,6 +73,14 @@ features = [
 	# "build-mode-default",
 ]
 
+[dependencies.cpython]
+version = "0.5"
+features = [
+	"py-link-mode-unresolved-static",
+	"no-auto-initialize",
+	"serde",
+]
+
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 env_logger = "0.8"
 glsl-to-spirv = "0.1"
