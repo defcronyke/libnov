@@ -15,12 +15,12 @@
     this project's license terms taking first priority.
 */
 
-use std::env;
+// use std::env;
 
 fn main() {
-    let dir = env::var("LIBPYTHON_DIR").unwrap();
-    let lib = env::var("LIBPYTHON_NAME").unwrap();
+    // let dir = env::var("LIBPYTHON_DIR").unwrap();
+    // let lib = env::var("LIBPYTHON_NAME").unwrap();
 
-    println!("cargo:rustc-link-search=native={}", dir);
-    println!("cargo:rustc-link-lib=static={}", lib);
+    // println!("cargo:rustc-link-search=native={}", dir);
+    // println!("cargo:rustc-link-lib=static={}", lib);
 }

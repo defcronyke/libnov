@@ -50,8 +50,8 @@ vulkan = ["gfx-backend-vulkan"]
 unstable = []
 python = [
 	"pyembed", 
-	# "cpython",
-	# "python3-sys",
+	"cpython",
+	"python3-sys",
 ]
 
 [dependencies]
@@ -72,27 +72,31 @@ branch = "main"
 optional = true
 default-features = false
 features = [
-	# "build-mode-standalone",
 	"cpython-link-unresolved-static",
+	"build-mode-standalone",
 	# "cpython-link-default",
 	# "build-mode-default",
 ]
 
-[dependencies.pyembed.dependencies.cpython]
+[dependencies.cpython]
 version = "0.5"
-# optional = true
+optional = true
 features = [
-	"serde",
-	# "py-link-mode-unresolved-static",
+	"py-link-mode-unresolved-static",
+	"extension-module",
+	"serde-convert",
 	# "no-auto-initialize",
+	# "python-3-9",
+	# "python-3-8",
 ]
 
-[dependencies.pyembed.dependencies.python3-sys]
+[dependencies.python3-sys]
 version = "0.5"
-# optional = true
+optional = true
 features = [
+	"link-mode-unresolved-static",
 	"extension-module",
-	# "link-mode-unresolved-static",
+	"python-3-9",
 ]
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
