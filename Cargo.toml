@@ -72,9 +72,9 @@ branch = "main"
 optional = true
 default-features = false
 features = [
-	# "build-mode-standalone",
+	"build-mode-standalone",
 	# "cpython-link-default",
-	"cpython-link-unresolved-static",
+	# "cpython-link-unresolved-static",
 	# "build-mode-default",
 ]
 
@@ -83,16 +83,16 @@ version = "0.5"
 optional = true
 features = [
 	"serde",
-	"py-link-mode-unresolved-static",
-	"no-auto-initialize",
+	# "py-link-mode-unresolved-static",
+	# "no-auto-initialize",
 ]
 
 [dependencies.python3-sys]
 version = "0.5"
 optional = true
 features = [
-	"extension-module",
-	"link-mode-unresolved-static",
+	# "extension-module",
+	# "link-mode-unresolved-static",
 ]
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
