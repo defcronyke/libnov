@@ -28,6 +28,7 @@ install_correct_python_version() {
 		echo -e "$PYENV_PROFILE_STR" >> "$SHELL_PROFILE_FILE"
 
 		echo "SHELL_PROFILE_FILE=\"$SHELL_PROFILE_FILE\""
+		cat "$SHELL_PROFILE_FILE"
 
 		# exec "$SHELL"
 		source "$SHELL_PROFILE_FILE"
