@@ -72,19 +72,23 @@ branch = "main"
 optional = true
 default-features = false
 features = [
-	"cpython-link-unresolved-static",
 	"build-mode-standalone",
+	"cpython-link-unresolved-static",
 	# "cpython-link-default",
+	# "build-mode-prebuilt-artifacts",
+	# "build-mode-pyoxidizer-exe",
 	# "build-mode-default",
 ]
 
 [dependencies.cpython]
 version = "0.5"
 optional = true
+default-features = false
 features = [
-	"py-link-mode-unresolved-static",
-	"extension-module",
+	# "extension-module",
 	"serde-convert",
+	"python3-sys",
+	# "py-link-mode-unresolved-static",
 	# "no-auto-initialize",
 	# "python-3-9",
 	# "python-3-8",
@@ -93,10 +97,11 @@ features = [
 [dependencies.python3-sys]
 version = "0.5"
 optional = true
+default-features = false
 features = [
-	"link-mode-unresolved-static",
-	"extension-module",
+	# "extension-module",
 	"python-3-9",
+	# "link-mode-unresolved-static",
 ]
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
