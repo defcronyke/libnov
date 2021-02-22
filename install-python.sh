@@ -20,7 +20,7 @@ install_correct_python_version() {
 
 	SHELL_PROFILE_FILE=$(if [ "$BASH_ENV" == "$HOME/.bashrc" ]; then echo "$HOME/.bash_profile"; else echo "$HOME/.bashrc"; fi)
 	# PYENV_PROFILE_STR='echo "$HOME/.pyenv/bin" >> "$GITHUB_PATH"\necho "$HOME/.pyenv/libexec" >> "$GITHUB_PATH"\n\nif command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi\n'
-	PYENV_PROFILE_STR='\nif command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi\n'
+	PYENV_PROFILE_STR='\nexport PATH="$HOME/.pyenv/bin:$PATH"\n\nif command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi\n'
 	
 	which pyenv >/dev/null
 	if [ $? -ne 0 ]; then
