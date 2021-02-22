@@ -52,7 +52,7 @@ install_correct_python_version() {
 
 	pyenv versions | grep "$PYTHON_FETCH_VERSION" >/dev/null
 	if [ $? -ne 0 ]; then
-		pyenv install "$PYTHON_FETCH_VERSION"
+		CFLAGS='-O2' pyenv install "$PYTHON_FETCH_VERSION"
 	fi
 
 	if [ ! -f .python-version ] || [ $(cat .python-version) != "$PYTHON_FETCH_VERSION" ]; then

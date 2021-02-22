@@ -43,7 +43,7 @@ install_libnov_deps() {
   set -e
 
   ARCH_DEPS="curl python python-pip base-devel openssl zlib git vulkan-icd-loader lib32-vulkan-icd-loader vulkan-headers cmake"
-  DEBIAN_DEPS="curl python3 python3-dev python3-pip make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev git libx11-dev libvulkan-dev libxcb1-dev xorg-dev cmake"
+  DEBIAN_DEPS="make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev python-openssl libx11-dev libvulkan-dev libxcb1-dev xorg-dev cmake"
   FEDORA_DEPS="curl python3 python3-pip make gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel git libX11-devel vulkan cmake"
   MACOS_DEPS="curl python openssl readline sqlite3 xz zlib git cmake"
 
