@@ -61,8 +61,8 @@ install_libnov_deps() {
     echo "Detected a Debian-like distro. Using apt-get."
     sudo apt-get update
     sudo apt-get install -y lsb-release
-    sudo apt-get -t `lsb_release -cs`-backports install -y $DEBIAN_DEPS || \
-    sudo apt-get install -y $DEBIAN_DEPS
+    sudo apt-get -t `lsb_release -cs`-backports install -y --no-install-recommends $DEBIAN_DEPS || \
+    sudo apt-get install -y --no-install-recommends $DEBIAN_DEPS
   elif [ $HAS_DNF -eq 0 ]; then
     echo "Detected a Fedora-like distro. Using dnf."
     sudo dnf upgrade --refresh

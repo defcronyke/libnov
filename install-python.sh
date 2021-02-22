@@ -58,14 +58,23 @@ install_correct_python_version() {
 
 	if [ ! -f .python-version ] || [ $(cat .python-version) != "$PYTHON_FETCH_VERSION" ]; then
 		pyenv local "$PYTHON_FETCH_VERSION"
+		pyenv version
 	fi
 
 	if [ ! -f ../nov/.python-version ] || [ $(cat ../nov/.python-version) != "$PYTHON_FETCH_VERSION" ]; then
-		ln -s "$PWD/.python-version" ../nov/.python-version
+		cd ../nov
+		pyenv local "$PYTHON_FETCH_VERSION"
+		pyenv version
+		cd ../libnov
+		# ln -s "$PWD/.python-version" ../nov/.python-version
 	fi
 
 	if [ ! -f ../.python-version ] || [ $(cat ../.python-version) != "$PYTHON_FETCH_VERSION" ]; then
-		ln -s "$PWD/.python-version" ../.python-version
+		cd ..
+		pyenv local "$PYTHON_FETCH_VERSION"
+		pyenv version
+		cd libnov
+		# ln -s "$PWD/.python-version" ../.python-version
 	fi
 
 	echo "Checking active python version:"
