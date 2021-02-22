@@ -79,6 +79,10 @@ install_correct_python_version() {
 
 	echo "Checking active python version:"
 	pyenv version
+
+	python -V
+	pyenv rehash
+	python -V
 }
 
 install_python() {
