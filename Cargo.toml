@@ -50,6 +50,7 @@ vulkan = ["gfx-backend-vulkan"]
 unstable = []
 python = [
 	"pyembed", 
+	"pyoxidizer",
 	"cpython",
 	"python3-sys",
 ]
@@ -72,20 +73,25 @@ branch = "main"
 optional = true
 default-features = false
 features = [
-	"build-mode-standalone",
+	"build-mode-pyoxidizer-exe",
 	"cpython-link-unresolved-static",
+	# "build-mode-standalone",
 	# "cpython-link-default",
 	# "build-mode-prebuilt-artifacts",
-	# "build-mode-pyoxidizer-exe",
 	# "build-mode-default",
 ]
+
+[dependencies.pyoxidizer]
+git = "https://github.com/indygreg/PyOxidizer"
+branch = "main"
+optional = true
 
 [dependencies.cpython]
 version = "0.5"
 optional = true
 default-features = false
 features = [
-	# "extension-module",
+	"extension-module",
 	"serde-convert",
 	"python3-sys",
 	# "py-link-mode-unresolved-static",
@@ -140,3 +146,4 @@ optional = true
 [target.'cfg(windows)'.dependencies.gfx-backend-dx12]
 version = "0.7"
 optional = true
+
