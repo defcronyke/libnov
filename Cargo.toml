@@ -72,9 +72,9 @@ branch = "main"
 optional = true
 default-features = false
 features = [
-	"build-mode-standalone",
+	# "build-mode-standalone",
+	"cpython-link-unresolved-static",
 	# "cpython-link-default",
-	# "cpython-link-unresolved-static",
 	# "build-mode-default",
 ]
 
