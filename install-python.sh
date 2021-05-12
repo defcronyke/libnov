@@ -25,7 +25,7 @@ install_correct_python_version() {
 	which pyenv >/dev/null
 	if [ $? -ne 0 ]; then
 		echo "Installing pyenv."
-		curl -sL "https://pyenv.run" | bash
+		env PYTHON_CONFIGURE_OPTS="--enable-shared" curl -sL "https://pyenv.run" | bash
 		echo -e "$PYENV_PROFILE_STR" >> "$SHELL_PROFILE_FILE"
 
 		echo "SHELL_PROFILE_FILE=\"$SHELL_PROFILE_FILE\""
