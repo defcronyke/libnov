@@ -73,7 +73,7 @@ branch = "main"
 optional = true
 default-features = false
 features = [
-	"build-mode-pyoxidizer-exe",
+	# "build-mode-pyoxidizer-exe",
 	"cpython-link-unresolved-static",
 	# "build-mode-standalone",
 	# "cpython-link-default",
