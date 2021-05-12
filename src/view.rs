@@ -18,8 +18,8 @@
 #[cfg(feature = "python")]
 pub use crate::python;
 
-#[cfg(not(feature = "python"))]
-use std::marker::PhantomData;
+// #[cfg(not(feature = "python"))]
+// use std::marker::PhantomData;
 
 pub trait ViewKind {
     fn new() -> Self;
@@ -30,37 +30,41 @@ pub fn new<T: ViewKind>() -> T {
     T::new()
 }
 
-pub struct View<'a, 'b, 'c> {
+// pub struct View<'a, 'b, 'c> {
+pub struct View {
     name: String,
+    // #[cfg(feature = "python")]
+    // pub python: pyembed::MainPythonInterpreter<'a, 'b, 'c>,
 
-    #[cfg(feature = "python")]
-    pub python: pyembed::MainPythonInterpreter<'a, 'b, 'c>,
-
-    #[cfg(not(feature = "python"))]
-    _python: (
-        PhantomData<&'a bool>,
-        PhantomData<&'b bool>,
-        PhantomData<&'c bool>,
-    ),
+    // #[cfg(not(feature = "python"))]
+    // _python: (
+    //     PhantomData<&'a bool>,
+    //     PhantomData<&'b bool>,
+    //     PhantomData<&'c bool>,
+    // ),
 }
 
-impl<'a, 'b, 'c> ViewKind for View<'a, 'b, 'c> {
+// impl<'a, 'b, 'c> ViewKind for View<'a, 'b, 'c> {
+impl ViewKind for View {
     fn new() -> Self {
         let name = "View";
 
         println!("{} created.", name);
 
         #[cfg(feature = "python")]
-        println!("OPTIONAL FEATURE ENABLED: python");
+        {
+            println!("OPTIONAL FEATURE ENABLED: python");
+
+            python::init();
+        }
 
         Self {
             name: name.to_string(),
+            // #[cfg(feature = "python")]
+            // python: python::create_interpreter::<'a, 'b, 'c>().unwrap(),
 
-            #[cfg(feature = "python")]
-            python: python::create_interpreter::<'a, 'b, 'c>().unwrap(),
-
-            #[cfg(not(feature = "python"))]
-            _python: (PhantomData, PhantomData, PhantomData),
+            // #[cfg(not(feature = "python"))]
+            // _python: (PhantomData, PhantomData, PhantomData),
         }
     }
 

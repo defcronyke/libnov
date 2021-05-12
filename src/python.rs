@@ -15,14 +15,39 @@
     this project's license terms taking first priority.
 */
 
-use pyembed::*;
+use cpython::{PyDict, PyResult, Python};
 
-pub fn create_interpreter<'python, 'interpreter, 'resources>(
-) -> Result<pyembed::MainPythonInterpreter<'python, 'interpreter, 'resources>, NewInterpreterError>
-{
-    let mut config = OxidizedPythonInterpreterConfig::default();
-    config.interpreter_config.parse_argv = Some(false);
-    config.set_missing_path_configuration = false;
-
-    pyembed::MainPythonInterpreter::new(config)
+pub fn init() {
+    let gil = Python::acquire_gil();
+    hello(gil.python()).unwrap();
 }
+
+fn hello(py: Python) -> PyResult<()> {
+    let sys = py.import("sys")?;
+    let version: String = sys.get(py, "version")?.extract(py)?;
+
+    let locals = PyDict::new(py);
+    locals.set_item(py, "os", py.import("os")?)?;
+    let user: String = py
+        .eval(
+            "os.getenv('USER') or os.getenv('USERNAME')",
+            None,
+            Some(&locals),
+        )?
+        .extract(py)?;
+
+    println!("Hello {}, I'm Python {}", user, version);
+    Ok(())
+}
+
+// use pyembed::*;
+
+// pub fn create_interpreter<'python, 'interpreter, 'resources>(
+// ) -> Result<pyembed::MainPythonInterpreter<'python, 'interpreter, 'resources>, NewInterpreterError>
+// {
+//     let mut config = OxidizedPythonInterpreterConfig::default();
+//     config.interpreter_config.parse_argv = Some(false);
+//     config.set_missing_path_configuration = false;
+
+//     pyembed::MainPythonInterpreter::new(config)
+// }

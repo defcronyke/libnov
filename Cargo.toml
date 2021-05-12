@@ -49,8 +49,8 @@ dx12 = ["gfx-backend-dx12"]
 vulkan = ["gfx-backend-vulkan"]
 unstable = []
 python = [
-	"pyembed", 
-	"pyoxidizer",
+	# "pyembed", 
+	# "pyoxidizer",
 	"cpython",
 	"python3-sys",
 ]
@@ -67,25 +67,25 @@ hal = { version = "0.7", package = "gfx-hal" }
 auxil = { version = "0.8", package = "gfx-auxil" }
 winit = { version = "0.24", features = ["web-sys"] }
 
-[dependencies.pyembed]
-git = "https://github.com/indygreg/PyOxidizer"
-branch = "main"
-optional = true
-default-features = false
-features = [
-  "build-mode-default",
-	# "build-mode-pyoxidizer-exe",
-	# "cpython-link-unresolved-static",
-	# "build-mode-standalone",
-	"cpython-link-default",
-	# "build-mode-prebuilt-artifacts",
-	# "build-mode-default",
-]
+# [dependencies.pyembed]
+# git = "https://github.com/indygreg/PyOxidizer"
+# branch = "main"
+# optional = true
+# default-features = false
+# features = [
+#   "build-mode-default",
+# 	# "build-mode-pyoxidizer-exe",
+# 	# "cpython-link-unresolved-static",
+# 	# "build-mode-standalone",
+# 	"cpython-link-default",
+# 	# "build-mode-prebuilt-artifacts",
+# 	# "build-mode-default",
+# ]
 
-[dependencies.pyoxidizer]
-git = "https://github.com/indygreg/PyOxidizer"
-branch = "main"
-optional = true
+# [dependencies.pyoxidizer]
+# git = "https://github.com/indygreg/PyOxidizer"
+# branch = "main"
+# optional = true
 
 [dependencies.cpython]
 version = "0.6"
@@ -94,7 +94,7 @@ default-features = false
 features = [
 	# "extension-module",
 	"python3-sys",
-	"serde-convert",
+	# "serde-convert",
 	# "py-link-mode-unresolved-static",
 	# "no-auto-initialize",
 	# "python-3-9",
