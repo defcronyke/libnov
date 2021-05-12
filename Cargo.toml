@@ -88,7 +88,7 @@ winit = { version = "0.24", features = ["web-sys"] }
 # optional = true
 
 [dependencies.cpython]
-version = "0.6"
+version = "*"
 optional = true
 default-features = false
 features = [
@@ -102,14 +102,14 @@ features = [
 ]
 
 [dependencies.python3-sys]
-version = "0.6"
+version = "*"
 optional = true
-default-features = false
-features = [
-	# "extension-module",
-	"python-3-9",
-	# "link-mode-unresolved-static",
-]
+# default-features = false
+# features = [
+# 	# "extension-module",
+# 	"python-3-9",
+# 	# "link-mode-unresolved-static",
+# ]
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 env_logger = "0.8"
