@@ -52,7 +52,7 @@ python = [
 	# "pyembed", 
 	# "pyoxidizer",
 	"cpython",
-	"python3-sys",
+	# "python3-sys",
 ]
 
 [dependencies]
@@ -90,26 +90,26 @@ winit = { version = "0.24", features = ["web-sys"] }
 [dependencies.cpython]
 version = "*"
 optional = true
-default-features = false
-features = [
-	# "extension-module",
-	"python3-sys",
-	# "serde-convert",
-	# "py-link-mode-unresolved-static",
-	# "no-auto-initialize",
-	# "python-3-9",
-	# "python-3-8",
-]
-
-[dependencies.python3-sys]
-version = "*"
-optional = true
 # default-features = false
 # features = [
 # 	# "extension-module",
-# 	"python-3-9",
-# 	# "link-mode-unresolved-static",
+# 	"python3-sys",
+# 	# "serde-convert",
+# 	# "py-link-mode-unresolved-static",
+# 	# "no-auto-initialize",
+# 	# "python-3-9",
+# 	# "python-3-8",
 # ]
+
+# [dependencies.python3-sys]
+# version = "*"
+# optional = true
+# # default-features = false
+# # features = [
+# # 	# "extension-module",
+# # 	"python-3-9",
+# # 	# "link-mode-unresolved-static",
+# # ]
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 env_logger = "0.8"
