@@ -25,7 +25,7 @@ install_correct_python_version() {
 	which pyenv >/dev/null
 	if [ $? -ne 0 ]; then
 		echo "Installing pyenv."
-		env PYTHON_CONFIGURE_OPTS="--enable-shared" curl -sL "https://pyenv.run" | bash
+		curl -sL "https://pyenv.run" | bash
 		echo -e "$PYENV_PROFILE_STR" >> "$SHELL_PROFILE_FILE"
 
 		echo "SHELL_PROFILE_FILE=\"$SHELL_PROFILE_FILE\""
@@ -53,7 +53,7 @@ install_correct_python_version() {
 
 	pyenv versions | grep "$PYTHON_FETCH_VERSION" >/dev/null
 	if [ $? -ne 0 ]; then
-		CFLAGS='-O2' pyenv install "$PYTHON_FETCH_VERSION"
+		env PYTHON_CONFIGURE_OPTS="--enable-shared" CFLAGS='-O2' pyenv install "$PYTHON_FETCH_VERSION"
 	fi
 
 	if [ ! -f .python-version ] || [ $(cat .python-version) != "$PYTHON_FETCH_VERSION" ]; then
