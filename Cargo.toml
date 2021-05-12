@@ -87,12 +87,12 @@ branch = "main"
 optional = true
 
 [dependencies.cpython]
-version = "0.5"
+version = "0.5.2"
 optional = true
 default-features = false
 features = [
+	"extension-module",
 	"python3-sys",
-	# "extension-module",
 	# "serde-convert",
 	# "py-link-mode-unresolved-static",
 	# "no-auto-initialize",
@@ -101,12 +101,12 @@ features = [
 ]
 
 [dependencies.python3-sys]
-version = "0.5"
+version = "0.5.2"
 optional = true
 default-features = false
 features = [
-	"python-3-9",
 	# "extension-module",
+	"python-3-9",
 	# "link-mode-unresolved-static",
 ]
 
