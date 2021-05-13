@@ -31,7 +31,11 @@ install_python_cross_win64() {
     cp python39.dll python3.9.dll
   fi
 
+  mkdir -p ../target/x86_64-pc-windows-gnu/debug/
+  mkdir -p ../target/x86_64-pc-windows-gnu/release/
+
   cp python39.dll python3.9.dll ../target/x86_64-pc-windows-gnu/debug/
+  cp python39.dll python3.9.dll ../target/x86_64-pc-windows-gnu/release/
   
   cd ../../libnov
 }
