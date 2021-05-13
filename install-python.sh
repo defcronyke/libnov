@@ -24,19 +24,6 @@ install_correct_python_version() {
 	
 	which pyenv >/dev/null
 	if [ $? -ne 0 ]; then
-    if [ $# -gt 0 ] && [ $1 == "--cross-win64" ]; then
-      echo "Installing win64 version of Python for cross-compiling."
-
-      mkdir python-cross-win64
-      cd python-cross-win64
-      
-      wget "https://www.python.org/ftp/python/3.9.1/python-3.9.1-embed-amd64.zip"
-      
-      unzip python-3.9.1-embed-amd64.zip
-      
-      cd ..
-    fi
-
     echo "Installing pyenv."
     curl -sL "https://pyenv.run" | bash
     echo -e "$PYENV_PROFILE_STR" >> "$SHELL_PROFILE_FILE"
@@ -96,6 +83,19 @@ install_correct_python_version() {
 	python -V
 	pyenv rehash
 	python -V
+
+  if [ $# -gt 0 ] && [ $1 == "--cross-win64" ]; then
+    echo "Installing win64 version of Python for cross-compiling."
+
+    mkdir python-cross-win64
+    cd python-cross-win64
+    
+    wget "https://www.python.org/ftp/python/3.9.1/python-3.9.1-embed-amd64.zip"
+    
+    unzip python-3.9.1-embed-amd64.zip
+    
+    cd ..
+  fi
 }
 
 install_python() {
