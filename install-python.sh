@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # Copyright (c) 2021 Jeremy Carter <jeremy@jeremycarter.ca>
 #
 # All uses of this project in part or in whole are governed
@@ -84,7 +84,7 @@ install_correct_python_version() {
 	pyenv rehash
 	python -V
 
-  if [ $# -gt 0 ] && [ $1 == "--cross-win64" ]; then
+  if [ $# -gt 0 ] && [ "$1" == "--cross-win64" ]; then
     echo "Installing win64 version of Python for cross-compiling."
 
     mkdir python-cross-win64
