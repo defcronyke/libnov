@@ -16,7 +16,7 @@
 # this project's license terms taking first priority.
 
 install_python_cross_win64() {
-  echo "arg: --cross-win64"
+  echo "Installing win64 version of Python for cross-compiling."
 
   cd ../nov
 
@@ -24,17 +24,16 @@ install_python_cross_win64() {
   cd python-cross-win64
   
   if [ ! -d "Python-3.9.1" ]; then
-    echo "Installing win64 version of Python for cross-compiling."
     wget "https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tar.xz"
     wget "https://www.python.org/ftp/python/3.9.1/python-3.9.1-embed-amd64.zip"
-    tar xvf Python-3.9.1.tar.xz
+    tar xf Python-3.9.1.tar.xz
     unzip python-3.9.1-embed-amd64.zip
     cp python39.dll python3.9.dll
   fi
 
-  cp python39.dll python3.9.dll ../target-cross-win64/x86_64-pc-windows-gnu/debug/
+  cp python39.dll python3.9.dll ../target/x86_64-pc-windows-gnu/debug/
   
-  cd ../libnov
+  cd ../../libnov
 }
 
 install_python_cross_win64 $@
