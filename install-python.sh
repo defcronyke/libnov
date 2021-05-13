@@ -24,19 +24,32 @@ install_correct_python_version() {
 	
 	which pyenv >/dev/null
 	if [ $? -ne 0 ]; then
-		echo "Installing pyenv."
-		curl -sL "https://pyenv.run" | bash
-		echo -e "$PYENV_PROFILE_STR" >> "$SHELL_PROFILE_FILE"
+    if [ $# -gt 0 ] && [ $1 == "--cross-win64" ]; then
+      echo "Installing win64 version of Python for cross-compiling."
 
-		echo "SHELL_PROFILE_FILE=\"$SHELL_PROFILE_FILE\""
-		cat "$SHELL_PROFILE_FILE"
+      mkdir python-cross-win64
+      cd python-cross-win64
+      
+      wget "https://www.python.org/ftp/python/3.9.1/python-3.9.1-embed-amd64.zip"
+      
+      unzip python-3.9.1-embed-amd64.zip
+      
+      cd ..
+    fi
 
-		source "$SHELL_PROFILE_FILE"
+    echo "Installing pyenv."
+    curl -sL "https://pyenv.run" | bash
+    echo -e "$PYENV_PROFILE_STR" >> "$SHELL_PROFILE_FILE"
 
-		ls -al "$HOME/.pyenv/bin"
-		ls -al "$HOME/.pyenv/libexec"
+    echo "SHELL_PROFILE_FILE=\"$SHELL_PROFILE_FILE\""
+    cat "$SHELL_PROFILE_FILE"
 
-		echo "PATH=\"$PATH\""
+    source "$SHELL_PROFILE_FILE"
+
+    ls -al "$HOME/.pyenv/bin"
+    ls -al "$HOME/.pyenv/libexec"
+
+    echo "PATH=\"$PATH\""
 
 	else
 		echo "Not installing pyenv because it's already installed."
@@ -113,7 +126,7 @@ install_python() {
 		echo "Warning: You can choose to fetch a different version instead by setting the environment variable \"PYTHON_FETCH_VERSION\"."
 
 		set +e
-		install_correct_python_version
+		install_correct_python_version $@
 		res=$?
 		set -e
 
