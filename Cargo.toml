@@ -51,10 +51,6 @@ vulkan = ["gfx-backend-vulkan"]
 unstable = []
 python = [
   "pyo3",
-	# "pyembed", 
-	# "pyoxidizer",
-	# "cpython",
-	# "python3-sys",
 ]
 
 [dependencies]
@@ -74,53 +70,9 @@ version = "0.13"
 optional = true
 default-features = false
 features = [
-  # "extension-module",
   "auto-initialize",
+  # "extension-module",
 ]
-
-# [dependencies.pyembed]
-# git = "https://github.com/indygreg/PyOxidizer"
-# branch = "main"
-# optional = true
-# default-features = false
-# features = [
-#   "build-mode-default",
-# 	# "build-mode-pyoxidizer-exe",
-# 	# "cpython-link-unresolved-static",
-# 	# "build-mode-standalone",
-# 	"cpython-link-default",
-# 	# "build-mode-prebuilt-artifacts",
-# 	# "build-mode-default",
-# ]
-
-# [dependencies.pyoxidizer]
-# git = "https://github.com/indygreg/PyOxidizer"
-# branch = "main"
-# optional = true
-
-# [dependencies.cpython]
-# version = "*"
-# optional = true
-# default-features = false
-# features = [
-# 	# "extension-module",
-# 	"python3-sys",
-# 	# "serde-convert",
-# 	# "py-link-mode-unresolved-static",
-# 	# "no-auto-initialize",
-# 	# "python-3-9",
-# 	# "python-3-8",
-# ]
-
-# [dependencies.python3-sys]
-# version = "*"
-# optional = true
-# # default-features = false
-# # features = [
-# # 	# "extension-module",
-# # 	"python-3-9",
-# # 	# "link-mode-unresolved-static",
-# # ]
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 env_logger = "0.8"
