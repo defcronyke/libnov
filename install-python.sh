@@ -85,7 +85,9 @@ install_correct_python_version() {
 	python -V
 
   if [ $# -gt 0 ] && [ "$1" == "--cross-win64" ]; then
-    echo "Installing win64 version of Python for cross-compiling."
+    echo "arg: --cross-win64"
+
+    cd ../nov
 
     mkdir -p python-cross-win64
     cd python-cross-win64
@@ -101,7 +103,7 @@ install_correct_python_version() {
 
     cp python39.dll python3.9.dll ../target-cross-win64/x86_64-pc-windows-gnu/debug/
     
-    cd ..
+    cd ../libnov
   fi
 }
 
