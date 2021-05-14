@@ -14,5 +14,6 @@
 # terms from all of the different technologies apply, with
 # this project's license terms taking first priority.
 /target
+__pycache__/
 Cargo.lock
 .python-version

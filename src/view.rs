@@ -18,9 +18,6 @@
 #[cfg(feature = "python")]
 pub use crate::python;
 
-// #[cfg(not(feature = "python"))]
-// use std::marker::PhantomData;
-
 pub trait ViewKind {
     fn new() -> Self;
     fn get_name(&self) -> String;
@@ -30,21 +27,13 @@ pub fn new<T: ViewKind>() -> T {
     T::new()
 }
 
-// pub struct View<'a, 'b, 'c> {
 pub struct View {
-    name: String,
-    // #[cfg(feature = "python")]
-    // pub python: pyembed::MainPythonInterpreter<'a, 'b, 'c>,
+    #[cfg(feature = "python")]
+    pub feature_python: Option<String>,
 
-    // #[cfg(not(feature = "python"))]
-    // _python: (
-    //     PhantomData<&'a bool>,
-    //     PhantomData<&'b bool>,
-    //     PhantomData<&'c bool>,
-    // ),
+    name: String,
 }
 
-// impl<'a, 'b, 'c> ViewKind for View<'a, 'b, 'c> {
 impl ViewKind for View {
     fn new() -> Self {
         let name = "View";
@@ -53,18 +42,21 @@ impl ViewKind for View {
 
         #[cfg(feature = "python")]
         {
-            println!("OPTIONAL FEATURE ENABLED: python");
+            let _res = python::init();
 
-            python::init();
+            let globals = vec![];
+            let locals = vec![];
+
+            python::run_file("", globals, locals).map_err(|_err| {
+                println!("python error: python::run_file() failed");
+            });
         }
 
         Self {
             name: name.to_string(),
-            // #[cfg(feature = "python")]
-            // python: python::create_interpreter::<'a, 'b, 'c>().unwrap(),
 
-            // #[cfg(not(feature = "python"))]
-            // _python: (PhantomData, PhantomData, PhantomData),
+            #[cfg(feature = "python")]
+            feature_python: Some("python".to_string()),
         }
     }
 

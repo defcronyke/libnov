@@ -74,8 +74,8 @@ pub fn get_path(
     }
 
     println!(
-        "will check if file exists: {}
-looking for file in the following directories: {:?}",
+        "\nwill check if file exists: {}\n
+looking for file in the following directories: {:?}\n",
         &filename, filename_prefixes2
     );
 
