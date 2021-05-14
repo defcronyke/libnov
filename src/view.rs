@@ -47,9 +47,13 @@ impl ViewKind for View {
             let globals = vec![];
             let locals = vec![];
 
-            python::run_file("", globals, locals).map_err(|_err| {
-                println!("python error: python::run_file() failed");
-            });
+            let _res = python::run_file("", globals, locals).map_or_else(
+                |err| {
+                    println!("python error: python::run_file() failed");
+                    err
+                },
+                |res| res,
+            );
         }
 
         Self {

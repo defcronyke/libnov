@@ -153,8 +153,9 @@ fn _run(py: Python, code: &str, globals: Vec<&str>, locals: Vec<&str>) -> PyResu
 
 pub fn run_file(filepath: &str, globals: Vec<&str>, locals: Vec<&str>) -> Result<(), ()> {
     let mut cwd = env::current_dir().unwrap_or_default();
+    let mut cwd2 = env::current_dir().unwrap_or_default();
 
-    let _filepath = {
+    let mut _filepath = {
         if filepath == "" {
             cwd.push("../libnov/data/src/main.py");
             cwd.to_str().unwrap()
@@ -168,8 +169,17 @@ pub fn run_file(filepath: &str, globals: Vec<&str>, locals: Vec<&str>) -> Result
 
     println!("[ python run file opening ]: {}", _filepath);
 
-    let mut file =
-        File::open(_filepath).expect("\n[ python run file open error ]: unable to open file\n");
+    let mut file = File::open(_filepath)
+        .map_or_else(
+            |_err| {
+                cwd2 = env::current_dir().unwrap_or_default();
+                cwd2.push("data/src/main.py");
+                _filepath = cwd2.to_str().unwrap();
+                File::open(_filepath)
+            },
+            |res| Ok(res),
+        )
+        .expect("\n[ python run file open error ]: unable to open file\n");
 
     println!("[ python run file open ]: end");
 
