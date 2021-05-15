@@ -15,5 +15,6 @@
 # this project's license terms taking first priority.
 /target
 __pycache__/
+/data/src/pynov.so
 Cargo.lock
 .python-version

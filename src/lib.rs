@@ -25,6 +25,9 @@ pub mod window;
 #[cfg(feature = "python")]
 pub mod python;
 
+// #[cfg(feature = "python")]
+// pub mod pynov;
+
 pub use conf::*;
 pub use constant::*;
 pub use result::*;
@@ -32,6 +35,9 @@ pub use view::*;
 
 #[cfg(feature = "python")]
 pub use python::*;
+
+// #[cfg(feature = "python")]
+// pub use pynov::*;
 
 /** Start a libnov process.
 
