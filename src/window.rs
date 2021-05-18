@@ -103,7 +103,11 @@ impl Window {
         let args_len = args.len();
 
         if args_len > 1 {
-            c.set_file_read_default(&args[1]);
+            if args[1].ends_with(".py") && args_len > 2 {
+                c.set_file_read_default(&args[2]);
+            } else {
+                c.set_file_read_default(&args[1]);
+            }
         }
 
         Self { c }

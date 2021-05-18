@@ -38,7 +38,13 @@ pub fn get_path(
         .map(|res| path::Path::new(&res).to_str().unwrap().to_string())
         .collect();
 
-    let filename = src.map_or(GET_PATH_PROJECT_FILENAME.to_string(), |res| res.to_string());
+    let filename = src.map_or(GET_PATH_PROJECT_FILENAME.to_string(), |res| {
+        if res.ends_with(".py") {
+            GET_PATH_PROJECT_FILENAME.to_string()
+        } else {
+            res.to_string()
+        }
+    });
     let mut filename2 = path::PathBuf::new();
 
     if filename.chars().count() == 0 {
