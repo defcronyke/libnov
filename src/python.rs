@@ -102,15 +102,15 @@ fn _run(py: Python, code: &str, globals: Vec<&str>, locals: Vec<&str>) -> PyResu
     println!("[ python run globals loaded ]: {:?}\n", globals_py);
     println!("[ python run locals loaded ]: {:?}\n", locals_py);
 
-    println!("[ python run code ]: begin\n");
+    // println!("[ python run code ]: begin\n");
 
-    println!("[ ---------------- ]\n");
+    // println!("[ ---------------- ]\n");
 
-    println!("{}", code);
+    // println!("{}", code);
 
-    println!("[ ---------------- ]\n");
+    // println!("[ ---------------- ]\n");
 
-    println!("[ python run code ]: end\n");
+    // println!("[ python run code ]: end\n");
 
     let globals_py_dict = globals_py.clone().into_py_dict(py);
     let locals_py_dict = locals_py.clone().into_py_dict(py);
